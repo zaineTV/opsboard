@@ -66,14 +66,87 @@ h2{font-size:21px;margin:40px 0 14px;font-weight:700;letter-spacing:-.02em}
 .x{background:#7a2a2a;color:#fff;border-radius:8px;padding:2px 8px;font-size:12px;margin-top:6px}
 .add{border:1px dashed var(--mu);color:var(--mu);border-radius:12px;padding:9px 14px;font-size:13px;margin:10px 0}.add:hover{color:var(--tx);border-color:var(--tx)}
 .ed2{color:var(--mu);font-size:13px}input[type=color]{width:28px;height:24px;padding:0;border:0;background:none;cursor:pointer}
+.ph{position:relative;overflow:hidden;background-size:cover;background-position:center}
+.cam{position:absolute;left:8px;top:8px;z-index:2;background:var(--ac);color:#0b0b0d;font-size:12px;font-weight:700;border-radius:8px;padding:3px 9px}
+.nm{display:flex;align-items:center;justify-content:space-around;text-align:center;font-size:13px;gap:8px}.nm .tm{display:grid;gap:6px;justify-items:center}
+.nm i{font-style:normal;width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-weight:800;font-size:13px;color:#0b0b0d}
+.chs{margin-top:12px}.chs small{color:var(--mu)}.lnk{display:inline-block;background:var(--ac);color:#0b0b0d;font-weight:700;border-radius:10px;padding:6px 12px;margin:6px 6px 0 0;text-decoration:none}
+.btn{margin-left:auto;background:var(--ac);color:#0b0b0d;font-weight:700;font-size:13px;padding:7px 14px;border-radius:10px}
+.tabs{display:flex;gap:4px;padding:4px;background:var(--bg2);border:1px solid var(--line);border-radius:16px;width:max-content;max-width:100%;overflow-x:auto;margin:18px 0 12px}.tabs button{padding:9px 14px;border-radius:12px;color:var(--mu);white-space:nowrap}.tabs button.on{background:var(--bg3);color:var(--tx)}
+.m{display:grid;grid-template-columns:110px 1fr 100px;align-items:center;gap:10px;padding:14px 12px;margin-top:8px;border:1px solid var(--line);border-radius:18px;background:var(--bg2)}
+.m .vs{display:flex;align-items:center;justify-content:center;gap:14px;font-weight:800;font-size:19px}.m .vs span{display:flex;align-items:center;gap:8px;min-width:110px}.m .vs span:first-child{justify-content:flex-end}
+.m small{color:var(--mu);display:block;font-weight:400}.m .d{text-align:right;color:var(--mu);font-size:13px}.m .d b{display:inline-block;background:var(--bg3);color:var(--tx);border-radius:8px;padding:2px 10px;font-size:12px;margin-bottom:4px}.m .d.w b{background:#1f6b3d;color:#fff}.m .d.l b{background:#7a2a2a;color:#fff}
+.lg{font-style:normal;width:32px;height:32px;border-radius:10px;display:inline-grid;place-items:center;font-size:12px;font-weight:800;color:#0b0b0d;flex:none}.lg.hv{border-radius:0}
+.xt,.xh{display:grid;grid-template-columns:repeat(var(--n),1fr) auto;gap:10px;align-items:center;padding:12px 10px}.xt{border:1px solid var(--line);border-radius:14px;margin-top:6px;background:var(--bg2)}.xh{color:var(--mu);font-size:12px}
+.mp{display:grid;grid-template-columns:96px 1fr auto;gap:10px;align-items:center;padding:6px 0}.mp .mi{height:40px;border-radius:12px;padding:0 8px;font-weight:700;font-size:13px;color:#fff;display:flex;align-items:center;text-shadow:0 1px 3px rgba(0,0,0,.85)}.mp em{font-style:normal;font-size:12px;background:var(--bg3);border-radius:8px;padding:2px 8px}
+.pl.old{opacity:.7}.pl.old .ph{filter:grayscale(.75)}.pl.old:hover{opacity:1}.pl h4 small{color:var(--mu);font-weight:400;font-size:12px;margin-left:6px}
+.ph .tg{position:absolute;left:8px;bottom:8px;font-size:12px;background:rgba(0,0,0,.6);padding:3px 8px;border-radius:8px;color:#fff}.ph .ag{position:absolute;right:8px;bottom:8px;font-size:20px;font-weight:800;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,.8)}
+.pl .r{display:flex;justify-content:space-between;margin:10px 4px 0;padding-top:8px;border-top:1px solid var(--line);font-size:12px;color:var(--mu)}.pl .r b{display:block;color:var(--tx);font-size:14px}
+h2.oldh{font-size:18px;color:var(--mu);margin:30px 0 14px}
+@media(max-width:700px){.m{grid-template-columns:1fr;text-align:center}.m .d{text-align:center}.xh{display:none}.xt{grid-template-columns:1fr 1fr}.tabs{width:auto}}
 </style></head><body>
 <div class="app"><aside id="side"></aside><main>
 <header class="top"><span class="brand">OPSBOARD</span><nav id="nav"></nav><label class="search"><span aria-hidden="true">⌕</span><input id="q" placeholder="Chercher une équipe…" aria-label="Chercher une équipe"></label><span id="bar" class="row" style="margin:0"></span></header>
 <div class="wrap" id="view"></div></main></div>
+<input type="file" id="file" accept="image/*" hidden>
 <script>
 /* ===== Données : modifie ici (équipes, rosters, calendrier) ===== */
-var DATA=/*S*/{"season":"2027","teams":[{"id":"opt","n":"OpTic Texas","s":"OPT","c":"#8fd14f","city":"Texas","rk":1,"pts":575,"ch":"Finaliste (2e)","tt":["Major IV 2026"],"pl":["Dashy","Huke","Mercules","Shotzzy"]},{"id":"lat","n":"Los Angeles Thieves","s":"LAT","c":"#ff4a4a","city":"Los Angeles","rk":2,"pts":500,"ch":"Top 8 (7–8e)","tt":["Major III 2026"],"pl":["aBeZy","HyDra","Nium","Scrap"]},{"id":"faz","n":"FaZe Vegas","s":"FZV","c":"#f0453a","city":"Las Vegas","rk":3,"pts":440,"ch":"Champions du monde","tt":["Champions du monde 2026","Major II 2026"],"pl":["Simp","Drazah"]},{"id":"gm","n":"Paris Gentle Mates","s":"GM","c":"#d77bf0","city":"Paris","rk":4,"pts":375,"ch":"4e","tt":["Major I 2026"],"pl":["Estreal","Ghosty","JoeDeceives","Neptune","Sib"]},{"id":"koi","n":"Toronto KOI","s":"KOI","c":"#f2607f","city":"Toronto","rk":5,"pts":290,"ch":"Top 8 (7–8e)","tt":[],"pl":["Abe","CleanX","Flux","Insight","Kips"]},{"id":"g2","n":"G2 Minnesota","s":"G2","c":"#e6e6ea","city":"Minnesota","rk":6,"pts":250,"ch":"5–6e","tt":[],"pl":["Envoy","Nastie"]},{"id":"ryd","n":"Riyadh Falcons","s":"RYD","c":"#2fb86a","city":"Riyad","rk":7,"pts":240,"ch":"3e","tt":[],"pl":["Cellium","Exnid","KiSMET","Pred","qk4b"]},{"id":"mia","n":"Miami Heretics","s":"MIA","c":"#ff9020","city":"Miami","rk":8,"pts":235,"ch":"5–6e","tt":[],"pl":["MettalZ","ReeaL","Renkor","SupeR"]},{"id":"c9","n":"Cloud9 New York","s":"C9","c":"#35aaff","city":"New York","rk":null,"pts":null,"ch":"Non qualifié","tt":[],"pl":["Arian","Encourage","Hide","Nejra","Noysii"]},{"id":"bos","n":"M80 Boston","s":"M80","c":"#4f86ff","city":"Boston","rk":null,"pts":null,"ch":"Nouvelle franchise","tt":[],"pl":["Afro","Purj","Spart","TJHaLy"]},{"id":"car","n":"Carolina Royal Ravens","s":"CAR","c":"#8b6cff","city":"Caroline","rk":null,"pts":null,"ch":"Non qualifié","tt":[],"pl":["Exceed","Lurqxx","Standy"]},{"id":"van","n":"Vancouver Surge","s":"VAN","c":"#22cfc4","city":"Vancouver","rk":null,"pts":null,"ch":"Non qualifié","tt":[],"pl":["Mamba","Vik","Nemensions","Wevy"]}],"cal":[["6–8 nov. 2026","Monster Launch Invitational","En ligne · 16 équipes · $100 000","En cours"],["4–13 déc. 2026","Kickoff Classic","En ligne · Pro-Am avec les équipes Challengers",""],["8–10 janv. 2027","Pro-Am Minor","Tournoi mineur",""],["15 janv.–7 févr.","Qualifications Major I","En ligne",""],["12–14 févr. 2027","Major I","LAN en Europe",""],["26 févr.–4 avr.","Major II","Qualifications puis LAN",""],["16 avr.–23 mai","Major III","Hôte : Toronto KOI",""],["28 mai–20 juin","Major IV","Fin de saison régulière (Côte Ouest)",""],["8–11 juil. 2027","Championnat du monde","Post-saison",""]],"pal":[["Major I 2026","Paris Gentle Mates","4-3 contre OpTic Texas"],["Major II 2026","FaZe Vegas","4-1 contre OpTic Texas"],["Major III 2026","Los Angeles Thieves","4-3 contre OpTic Texas"],["Major IV 2026","OpTic Texas",""],["Championnat 2026","FaZe Vegas","5-2 contre OpTic Texas"]],"news":[["Nouveauté","M80 Boston rejoint la ligue","Nouvelle franchise en 2027, elle remplace Boston Breach."],["Saison","Cap sur Modern Warfare 4","La saison 2027 démarre le 4 décembre sur Modern Warfare 4."],["Mercato","G2 Minnesota perd Kremp et Skyz","Les deux joueurs sont partis le 30 octobre ; aucun nouveau roster annoncé."]]}/*E*/;
-var st={g:null,tab:"Vue d’ensemble"},TABS=["Vue d’ensemble","Équipes","Calendrier","Classement","Palmarès"],ED=false,SAVED=JSON.stringify(DATA);
+var DATA=/*S*/{
+season:"2027",
+teams:[
+{id:"opt",n:"OpTic Texas",s:"OPT",c:"#8fd14f",city:"Texas",rk:1,pts:575,ch:"Finaliste (2e)",tt:["Major IV 2026"],pl:["Dashy","Huke","Mercules","Shotzzy"]},
+{id:"lat",n:"Los Angeles Thieves",s:"LAT",c:"#ff4a4a",city:"Los Angeles",rk:2,pts:500,ch:"Top 8 (7–8e)",tt:["Major III 2026"],pl:["aBeZy","HyDra","Nium","Scrap"]},
+{id:"faz",n:"FaZe Vegas",s:"FZV",c:"#f0453a",city:"Las Vegas",rk:3,pts:440,ch:"Champions du monde",tt:["Champions du monde 2026","Major II 2026"],pl:["Simp","Drazah"]},
+{id:"gm",n:"Paris Gentle Mates",s:"GM",c:"#d77bf0",city:"Paris",rk:4,pts:375,ch:"4e",tt:["Major I 2026"],pl:["Estreal","Ghosty","JoeDeceives","Neptune","Sib"]},
+{id:"koi",n:"Toronto KOI",s:"KOI",c:"#f2607f",city:"Toronto",rk:5,pts:290,ch:"Top 8 (7–8e)",tt:[],pl:["Abe","CleanX","Flux","Insight","Kips"]},
+{id:"g2",n:"G2 Minnesota",s:"G2",c:"#e6e6ea",city:"Minnesota",rk:6,pts:250,ch:"5–6e",tt:[],pl:["Envoy","Nastie"]},
+{id:"ryd",n:"Riyadh Falcons",s:"RYD",c:"#2fb86a",city:"Riyad",rk:7,pts:240,ch:"3e",tt:[],pl:["Cellium","Exnid","KiSMET","Pred","qk4b"]},
+{id:"mia",n:"Miami Heretics",s:"MIA",c:"#ff9020",city:"Miami",rk:8,pts:235,ch:"5–6e",tt:[],pl:["MettalZ","ReeaL","Renkor","SupeR"]},
+{id:"c9",n:"Cloud9 New York",s:"C9",c:"#35aaff",city:"New York",rk:null,pts:null,ch:"Non qualifié",tt:[],pl:["Arian","Encourage","Hide","Nejra","Noysii"]},
+{id:"bos",n:"M80 Boston",s:"M80",c:"#4f86ff",city:"Boston",rk:null,pts:null,ch:"Nouvelle franchise",tt:[],pl:["Afro","Purj","Spart","TJHaLy"]},
+{id:"car",n:"Carolina Royal Ravens",s:"CAR",c:"#8b6cff",city:"Caroline",rk:null,pts:null,ch:"Non qualifié",tt:[],pl:["Exceed","Lurqxx","Standy"]},
+{id:"van",n:"Vancouver Surge",s:"VAN",c:"#22cfc4",city:"Vancouver",rk:null,pts:null,ch:"Non qualifié",tt:[],pl:["Mamba","Vik","Nemensions","Wevy"]}
+],
+cal:[
+["6–8 nov. 2026","Monster Launch Invitational","En ligne · 16 équipes · $100 000","En cours"],
+["4–13 déc. 2026","Kickoff Classic","En ligne · Pro-Am avec les équipes Challengers",""],
+["8–10 janv. 2027","Pro-Am Minor","Tournoi mineur",""],
+["15 janv.–7 févr.","Qualifications Major I","En ligne",""],
+["12–14 févr. 2027","Major I","LAN en Europe",""],
+["26 févr.–4 avr.","Major II","Qualifications puis LAN",""],
+["16 avr.–23 mai","Major III","Hôte : Toronto KOI",""],
+["28 mai–20 juin","Major IV","Fin de saison régulière (Côte Ouest)",""],
+["8–11 juil. 2027","Championnat du monde","Post-saison",""]
+],
+pal:[
+["Major I 2026","Paris Gentle Mates","4-3 contre OpTic Texas"],
+["Major II 2026","FaZe Vegas","4-1 contre OpTic Texas"],
+["Major III 2026","Los Angeles Thieves","4-3 contre OpTic Texas"],
+["Major IV 2026","OpTic Texas",""],
+["Championnat 2026","FaZe Vegas","5-2 contre OpTic Texas"]
+],
+news:[
+["Nouveauté","M80 Boston rejoint la ligue","Nouvelle franchise en 2027, elle remplace Boston Breach."],
+["Saison","Cap sur Modern Warfare 4","La saison 2027 démarre le 4 décembre sur Modern Warfare 4."],
+["Mercato","G2 Minnesota perd Kremp et Skyz","Les deux joueurs sont partis le 30 octobre ; aucun nouveau roster annoncé."]
+]}/*E*/;
+var st={g:null,tab:"Vue d’ensemble"},TABS=["Vue d’ensemble","Équipes","Calendrier","Classement","Palmarès"],ED=false;
+DATA.ch=DATA.ch||[["Twitch","https://www.twitch.tv/callofdutyleague"],["YouTube","https://www.youtube.com/@CODLeague"]];
+var PRIZE={faz:"800 000 $",opt:"480 000 $",ryd:"320 000 $",gm:"160 000 $",mia:"80 000 $",g2:"80 000 $",koi:"40 000 $",lat:"40 000 $"},
+FIN=[["Championnat 2026","BO9","19/07/2026","faz",5,2],["Major III 2026","BO7","2026","lat",4,3],["Major II 2026","BO7","29/03/2026","faz",4,1],["Major I 2026","BO7","01/02/2026","gm",4,3]],
+OLD={faz:[["04","28/09/2026"],["Abuzah","28/09/2026"]],g2:[["Kremp","30/10/2026"],["Skyz","30/10/2026"]]};
+function gt(id){return DATA.teams[gi(id)]}
+DATA.teams.forEach(function(t){
+t.pl=t.pl.map(function(p){p=typeof p==="string"?{p:p}:p;["img","r","n","d","in","out"].forEach(function(k){if(p[k]==null)p[k]=""});return p});
+t.next=t.next||{b:"À déterminer",ev:"Kickoff Classic",dt:"4–13 déc. 2026",tm:""};t.stats=t.stats||[];t.maps=t.maps||[];t.matches=t.matches||[];
+if(!t.results){t.results=[];FIN.forEach(function(f){var w=f[3]===t.id;if(!w&&t.id!=="opt")return;var x=gt(w?"opt":f[3]);t.results.push({bo:f[1],ev:f[0],a:t.n,b:x.n,ac:t.c,bc:x.c,la:"",lb:"",sa:String(w?f[4]:f[5]),sb:String(w?f[5]:f[4]),st:w?"Victoire":"Défaite",dt:f[2],tm:""})})}
+if(!t.t){t.t={tournois:[],classement:[],palmares:t.tt.map(function(x){return[x,"2026",""]}),gains:[],mercato:[]};
+if(PRIZE[t.id]){t.t.tournois.push(["Championnat 2026","16–19 juil. 2026",t.ch,""]);t.t.gains.push(["Championnat 2026","19/07/2026",PRIZE[t.id]])}
+if(t.rk)t.t.classement.push([String(t.rk),t.n,String(t.pts),"Points CDL 2026"]);
+(OLD[t.id]||[]).forEach(function(o){t.pl.push({p:o[0],img:"",r:"",n:"",d:"",in:"",out:o[1]});t.t.mercato.push([o[0],"Départ",o[1],t.n])})}
+});
+
+var SAVED=JSON.stringify(DATA);
 var $=function(i){return document.getElementById(i)};
 function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
 function get(p){return p.split(".").reduce(function(o,k){return o[k]},DATA)}
@@ -83,19 +156,50 @@ function T(p){var v=get(p);return ED?'<span class="ed" contenteditable="true" da
 function X(p,l){return ED?'<button class="x" data-del="'+p+'">'+(l||"×")+'</button>':""}
 function A(p,l){return ED?'<button class="add" data-add="'+p+'">+ '+l+'</button>':""}
 function C(p){return ED?'<input type="color" data-c="'+p+'" value="'+get(p)+'" aria-label="Couleur">':""}
-var NEW={teams:function(){return{id:"t"+Date.now(),n:"Nouvelle équipe",s:"NEW",c:"#8b8b95",city:"Ville",rk:"",pts:"",ch:"—",tt:[],pl:[]}},pl:function(){return"Nouveau joueur"},tt:function(){return"Nouveau titre"},cal:function(){return["Date","Événement","Détails",""]},pal:function(){return["Événement","Vainqueur","Score"]},news:function(){return["Catégorie","Titre","Texte"]}};
+var NEW={teams:function(){return{id:"t"+Date.now(),n:"Nouvelle équipe",s:"NEW",c:"#8b8b95",city:"Ville",rk:"",pts:"",ch:"—",tt:[],pl:[]}},pl:function(){return{p:"Nouveau joueur",img:""}},ch:function(){return["Chaîne","https://"]},tt:function(){return"Nouveau titre"},cal:function(){return["Date","Événement","Détails",""]},pal:function(){return["Événement","Vainqueur","Score"]},news:function(){return["Catégorie","Titre","Texte"]}};
 function tile(t,cl){return'<button class="'+cl+'" data-g="'+t.id+'" style="background:'+t.c+'" title="'+esc(t.n)+'" aria-label="'+esc(t.n)+'">'+esc(t.s)+'</button>'}
 function evs(n,ro){return DATA.cal.slice(0,n||99).map(function(e,i){var q="cal."+i,U=ro?function(p){return esc(get(p))}:T;
 return'<div class="ev'+(e[3]?' now':'')+'"><div class="dt">'+U(q+".0")+'</div><div><b>'+U(q+".1")+'</b><small>'+U(q+".2")+'</small></div>'+(ED&&!ro?'<span class="row" style="margin:0">'+T(q+".3")+X(q)+'</span>':(e[3]?'<em>'+esc(e[3])+'</em>':''))+'</div>'}).join("")}
 function grid(){return'<div class="teams">'+DATA.teams.map(function(t){return'<button class="rc" data-g="'+t.id+'" style="background:'+t.c+'"><b>'+esc(t.s)+'</b>'+esc(t.n)+'<small>'+esc(t.city)+'</small></button>'}).join("")+'</div>'+A("teams","Ajouter une équipe")}
 function home(){
 var h='<div class="hero"><h1>OPSBOARD</h1><p>Toutes les équipes, les rosters, le calendrier et le palmarès de la Call of Duty League, saison '+DATA.season+'.</p></div><h2>Actualités</h2><div class="news">'+DATA.news.map(function(n,i){var q="news."+i;return'<div class="card"><small>'+T(q+".0")+'</small><h3>'+T(q+".1")+'</h3><p>'+T(q+".2")+'</p>'+X(q)+'</div>'}).join("")+'</div>'+A("news","Ajouter une actualité");
-return h+'<h2>Prochains rendez-vous</h2>'+evs(4,true)+'<h2>Les '+DATA.teams.length+' équipes</h2>'+grid()+'<p class="note">Rosters susceptibles d’évoluer avant le 4 décembre.</p>'}
-function team(i){var t=DATA.teams[i],b="teams."+i,h='<div class="gp"><div><div class="title"><h1 style="color:'+t.c+'">'+T(b+".n")+'</h1>';
-if(ED)h+=C(b+".c")+'<span class="ed2">Sigle : '+T(b+".s")+' · Ville : '+T(b+".city")+'</span>'+X(b,"Supprimer l’équipe");
-h+='</div><div class="stats"><div><small>Classement 2026</small><b>'+(ED?T(b+".rk"):(t.rk?t.rk+"e":"—"))+'</b></div><div><small>Points CDL 2026</small><b>'+(ED?T(b+".pts"):(t.pts||"—"))+'</b></div><div><small>Championnat 2026</small><b>'+T(b+".ch")+'</b></div><div><small>Joueurs 2027</small><b>'+t.pl.length+'</b></div></div>';
-h+='<div class="players">'+t.pl.map(function(p,j){var q=b+".pl."+j;return'<div class="pl"><div class="ph">'+esc((p||"?")[0])+'</div><h4>'+T(q)+'</h4><p>Roster 2027</p>'+X(q)+'</div>'}).join("")+'</div>'+A(b+".pl","Ajouter un joueur")+'</div>';
-h+='<div class="side"><div class="box"><h3>Palmarès 2026</h3>'+(t.tt.length?t.tt.map(function(x,k){var q=b+".tt."+k;return'<p style="margin:6px 0">🏆 '+T(q)+' '+X(q)+'</p>'}).join(""):'<p style="margin:0;color:var(--mu)">Aucun titre en 2026.</p>')+A(b+".tt","Ajouter un titre")+'</div><div class="box"><h3>Prochain événement</h3>'+evs(1,true)+'</div></div></div>';
+return h+'<h2>Prochains rendez-vous</h2>'+evs(4,true)+'<div class="box" style="margin-top:14px">'+chs()+'</div>'+'<h2>Les '+DATA.teams.length+' équipes</h2>'+grid()+'<p class="note">Rosters susceptibles d’évoluer avant le 4 décembre.</p>'}
+function pd(s){var m=/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(String(s||"").trim());return m?new Date(+m[3],+m[2]-1,+m[1]):null}
+function dur(p){var a=pd(p["in"]);if(!a)return"—";var b=pd(p.out),n=new Date();n=new Date(n.getFullYear(),n.getMonth(),n.getDate());var e=b&&b<n?b:n,d=Math.round((e-a)/864e5);if(d<0)return"À venir";if(d<1)return"Aujourd’hui";if(d<60)return d+(d>1?" jours":" jour");var m=Math.floor(d/30.44);if(m<12)return m+" mois";var y=Math.floor(m/12),r=m%12;return y+(y>1?" ans":" an")+(r?" "+r+" mois":"")}
+function age(d){var b=pd(d);if(!b)return null;var n=new Date(),a=n.getFullYear()-b.getFullYear();if(n.getMonth()<b.getMonth()||(n.getMonth()===b.getMonth()&&n.getDate()<b.getDate()))a--;return a>=0&&a<120?a:null}
+function V(p){return ED?T(p):(esc(get(p))||"—")}
+function LG(p,l,c){var v=get(p);return'<i class="lg'+(v?' hv':'')+'" style="'+(v?'background:url('+esc(U(v))+') center/contain no-repeat':'background:'+c)+'"'+(ED?' data-img="'+p+'" title="Cliquer pour mettre le logo" tabindex="0"':'')+'>'+(v?'':esc((l||"?")[0]))+'</i>'+(ED&&v?'<button class="x" data-rm="'+p+'">×</button>':'')}
+function BGM(m){return m[4]?"background:linear-gradient("+m[3]+"99,"+m[3]+"99),url("+esc(U(m[4]))+") center/cover,"+m[3]:"background:"+m[3]}
+var TB={tournois:["Tournoi","Date","Résultat","Détails"],classement:["Rang","Équipe","Points","Détails"],palmares:["Titre","Date","Détails"],gains:["Compétition","Date","Montant"],mercato:["Joueur","Mouvement","Date","Club / détails"]};
+var TK={"Tournois":"tournois","Classement":"classement","Palmarès":"palmares","Gains":"gains","Mercato":"mercato"};
+["tournois","classement","palmares","gains","mercato"].forEach(function(k){NEW[k]=function(){return TB[k].map(function(){return"…"})}});
+NEW.matches=function(){return{bo:"BO7",ev:"Événement",a:"Équipe A",b:"Équipe B",ac:"#8b8b95",bc:"#8b8b95",la:"",lb:"",sa:"",sb:"",st:"À venir",dt:"",tm:""}};
+NEW.results=function(){var m=NEW.matches();m.st="Victoire";m.sa="0";m.sb="0";return m};
+NEW.stats=function(){return["Statistique","—"]};NEW.maps=function(){return["Map","Mode","","#4f86ff",""]};
+function NM(t){var now=Date.now(),best=null,bt=1e18;(t.matches||[]).forEach(function(m){var s=String(m.st||"").trim().toLowerCase();if(s==="victoire"||s==="défaite")return;var d=pd(m.dt);if(!d){if(!best)best=m;return}var q=String(m.tm||"").match(/(\d{1,2}):(\d{2})/);d.setHours(q?+q[1]:0,q?+q[2]:0);d=d.getTime();if(d<now-108e5)return;if(d<bt){bt=d;best=m}});return best}
+function tbl(b,k){var g=get(b),c=TB[k],p=b+".t."+k,s="--n:"+c.length,h='<div><div class="xh" style="'+s+'">'+c.map(function(x){return'<span>'+x+'</span>'}).join("")+'<span></span></div>';
+g.t[k].forEach(function(r,j){h+='<div class="xt" style="'+s+'">';r.forEach(function(_,i){h+='<span>'+T(p+"."+j+"."+i)+'</span>'});h+='<span>'+X(p+"."+j)+'</span></div>'});
+if(!g.t[k].length&&!ED)h+='<div class="empty" style="margin-top:8px">Rien à afficher pour l’instant.</div>';return h+'</div>'+A(p,"Ajouter une ligne")}
+function mlist(b,t,mk){var h="";t[mk].forEach(function(m,j){var q=b+"."+mk+"."+j,c=m.st==="Victoire"?" w":m.st==="Défaite"?" l":"";
+h+='<div class="m"><div><b>'+T(q+".bo")+'</b><small>'+T(q+".ev")+'</small></div><div class="vs"><span>'+T(q+".a")+' '+LG(q+".la",m.a,m.ac)+C(q+".ac")+'</span>'+T(q+".sa")+' - '+T(q+".sb")+'<span>'+LG(q+".lb",m.b,m.bc)+' '+T(q+".b")+C(q+".bc")+'</span></div><div class="d'+c+'"><b>'+T(q+".st")+'</b><br>'+T(q+".dt")+'<br>'+T(q+".tm")+X(q)+'</div></div>'});
+if(!t[mk].length&&!ED)h+='<div class="empty" style="margin-top:8px">Aucun match pour l’instant.</div>';return h+A(b+"."+mk,"Ajouter un match")}
+function team(i){var t=DATA.teams[i],b="teams."+i,sub=st.sub||"Résultats",h='<div class="gp"><div><div class="title"><h1>Équipe — <span style="color:'+t.c+'">'+T(b+".n")+'</span></h1>';
+if(ED)h+=C(b+".c")+'<span class="ed2">Sigle : '+T(b+".s")+' · Ville : '+T(b+".city")+'</span>'+X(b,"Supprimer l’équipe");else h+='<button class="btn">Ajouter aux favoris</button>';
+h+='</div><div class="players">';
+var gone=function(p){var o=pd(p.out),n=new Date();n=new Date(n.getFullYear(),n.getMonth(),n.getDate());return!!(o&&o<=n)};
+var card=function(p,j){var q=b+".pl."+j,a=age(p.d);return'<div class="pl'+(gone(p)?' old':'')+'"><div class="ph"'+BG(q+".img")+'><span class="tg">'+dur(p)+'</span>'+(a!==null?'<span class="ag">'+a+'</span>':'')+(p.img?'':esc((p.p||"?")[0]))+IB(q+".img")+'</div><h4>'+T(q+".p")+'<small>'+V(q+".r")+'</small></h4><p>'+V(q+".n")+' • '+V(q+".d")+'</p><div class="r"><span>Arrivée<b>'+V(q+".in")+'</b></span><span>Départ<b>'+V(q+".out")+'</b></span></div>'+X(q)+'</div>'};
+var old=[];t.pl.forEach(function(p,j){if(gone(p))old.push(j);else h+=card(p,j)});h+='</div>';
+if(old.length){h+='<h2 class="oldh">Anciens membres ('+old.length+')</h2><div class="players">';old.forEach(function(j){h+=card(t.pl[j],j)});h+='</div>'}
+h+=A(b+".pl","Ajouter un joueur");
+h+='<div class="stats"><div><small>Classement 2026</small><b>'+(ED?T(b+".rk"):(t.rk?t.rk+"e":"—"))+'</b></div><div><small>Points CDL 2026</small><b>'+(ED?T(b+".pts"):(t.pts||"—"))+'</b></div><div><small>Championnat 2026</small><b>'+T(b+".ch")+'</b></div><div><small>Joueurs 2027</small><b>'+t.pl.filter(function(p){return!gone(p)}).length+'</b></div>';
+t.stats.forEach(function(s,j){h+='<div><small>'+T(b+".stats."+j+".0")+'</small><b>'+T(b+".stats."+j+".1")+'</b>'+X(b+".stats."+j)+'</div>'});
+h+=A(b+".stats","Statistique")+'</div><div class="tabs">';
+["Résultats","Calendrier","Tournois","Classement","Palmarès","Gains","Mercato"].forEach(function(x){h+='<button class="'+(sub===x?'on':'')+'" data-s="'+x+'">'+x+'</button>'});
+h+='</div>'+(sub==="Résultats"?mlist(b,t,"results"):sub==="Calendrier"?mlist(b,t,"matches"):tbl(b,TK[sub]));
+var mp="";t.maps.forEach(function(m,j){var q=b+".maps."+j;mp+='<div class="mp"><div class="mi" style="'+BGM(m)+'">'+T(q+".0")+'</div><b>'+T(q+".1")+'</b><em>'+T(q+".2")+'</em>'+(ED?'<div class="row" style="grid-column:1/-1;margin:0">'+C(q+".3")+IB(q+".4")+X(q)+'</div>':'')+'</div>'});
+if(!t.maps.length&&!ED)mp='<p style="margin:0;color:var(--mu)">Aucune map renseignée.</p>';
+h+='</div><div class="side"><div class="box"><h3>Palmarès 2026</h3>'+(t.tt.length?t.tt.map(function(x,k){var q=b+".tt."+k;return'<p style="margin:6px 0">🏆 '+T(q)+' '+X(q)+'</p>'}).join(""):'<p style="margin:0;color:var(--mu)">Aucun titre en 2026.</p>')+A(b+".tt","Ajouter un titre")+'</div>';
+h+='<div class="box"><h3>Prochain match</h3>'+nxt(i)+'</div><div class="box"><h3>Prochain événement</h3>'+evs(1,true)+'</div><div class="box"><h3>Maps</h3>'+mp+A(b+".maps","Ajouter une map")+'</div></div></div>';
 return h}
 function rank(){var rows=DATA.teams.filter(function(t){return t.rk}).sort(function(a,b){return a.rk-b.rk});
 return'<div class="title"><h1>Classement 2026</h1></div><div class="tr h"><span>#</span><span>Équipe</span><span>Points</span><span class="c4">Championnat</span></div>'+rows.map(function(t){return'<div class="tr"><b>'+esc(t.rk)+'</b><button data-g="'+t.id+'"><i style="background:'+t.c+'">'+esc(t.s)+'</i>'+esc(t.n)+'</button><span>'+esc(t.pts)+'</span><span class="c4">'+esc(t.ch)+'</span></div>'}).join("")+'<p class="note">Classement final de la saison 2026. Le classement 2027 commence le 4 décembre.</p>'}
@@ -110,6 +214,7 @@ $("view").innerHTML=i>-1?team(i):st.tab==="Équipes"?'<div class="title"><h1>Éq
 document.querySelectorAll("[data-g]").forEach(function(b){b.onclick=function(){st.g=b.dataset.g;draw();window.scrollTo(0,0)}});
 document.querySelectorAll("[data-t]").forEach(function(b){b.onclick=function(){st.tab=b.dataset.t;st.g=null;draw();window.scrollTo(0,0)}});
 document.querySelectorAll("[data-home]").forEach(function(b){b.onclick=function(){st.g=null;st.tab="Vue d’ensemble";draw()}});
+document.querySelectorAll("[data-s]").forEach(function(b){b.onclick=function(){st.sub=b.dataset.s;draw()}});
 bar()}
 function msg(t){var m=$("ms");if(m)m.textContent=t}
 function bar(){var b=$("bar");
@@ -133,9 +238,24 @@ catch(e){msg("Échec : "+e.message)}}
 document.addEventListener("input",function(e){var t=e.target;if(t.dataset&&t.dataset.e!==undefined)setp(t.dataset.e,t.textContent)});
 document.addEventListener("keydown",function(e){if(e.key==="Enter"&&e.target.dataset&&e.target.dataset.e!==undefined){e.preventDefault();e.target.blur()}});
 document.addEventListener("change",function(e){var t=e.target;if(t.dataset&&t.dataset.c){setp(t.dataset.c,t.value);draw()}});
-document.addEventListener("click",function(e){var t=e.target.closest("[data-del],[data-add]");if(!t||!ED)return;
+document.addEventListener("click",function(e){var t=e.target.closest("[data-del],[data-add],[data-img],[data-rm]");if(!t||!ED)return;
 if(t.dataset.del){var a=t.dataset.del.split("."),i=+a.pop();get(a.join(".")).splice(i,1);if(a.join(".")==="teams")st.g=null;draw()}
-else{var p=t.dataset.add,k=p.split(".").pop(),n=NEW[k]();get(p).push(n);if(k==="teams")st.g=n.id;draw()}});
+else if(t.dataset.img){imgPath=t.dataset.img;$("file").click()}else if(t.dataset.rm){setp(t.dataset.rm,"");draw()}else{var p=t.dataset.add,k=p.split(".").pop(),n=NEW[k]();get(p).push(n);if(k==="teams")st.g=n.id;draw()}});
+function nxt(i){var t=DATA.teams[i],b="teams."+i,am=NM(t),h;
+if(am){var nb=b+".matches."+t.matches.indexOf(am);h='<div class="nm"><div class="tm">'+LG(nb+".la",am.a,am.ac)+T(nb+".a")+'</div><div>-<br><small style="color:var(--mu)">'+T(nb+".ev")+'<br>'+T(nb+".dt")+' · '+T(nb+".tm")+'</small></div><div class="tm">'+LG(nb+".lb",am.b,am.bc)+T(nb+".b")+'</div></div>'}
+else{var n=b+".next";h='<div class="nm"><div class="tm"><i style="background:'+t.c+'">'+esc(t.s)+'</i>'+esc(t.n)+'</div><div>vs</div><div class="tm"><i style="background:var(--bg3);color:var(--tx)">?</i>'+T(n+".b")+'</div></div><p class="ed2" style="text-align:center;margin:10px 0 0">'+T(n+".ev")+'<br>'+T(n+".dt")+' '+T(n+".tm")+'</p>'}
+return h+chs()}
+function chs(){return'<div class="chs"><small>Où regarder (chaînes officielles)</small><br>'+DATA.ch.map(function(c,k){var q="ch."+k;return ED?'<div class="row" style="margin:4px 0">'+T(q+".0")+T(q+".1")+X(q)+'</div>':'<a class="lnk" href="'+(/^https?:\/\//.test(c[1])?esc(c[1]):"#")+'" target="_blank" rel="noopener">'+esc(c[0])+'</a>'}).join("")+A("ch","Ajouter une chaîne")+'</div>'}
+var PREV={},imgPath=null;
+function U(s){return PREV[s]||s}
+function BG(p){var v=get(p);return v?' style="background-image:url(\''+esc(U(v))+'\')"':''}
+function IB(p){var v=get(p);return ED?'<button class="cam" data-img="'+p+'">'+(v?'Changer':'Photo')+'</button>'+(v?'<button class="cam" style="top:auto;bottom:8px" data-rm="'+p+'" aria-label="Retirer la photo">×</button>':''):''}
+function shrink(f){return new Promise(function(ok,ko){var u=URL.createObjectURL(f),im=new Image();im.onerror=function(){ko(new Error("image illisible"))};
+im.onload=function(){var png=f.type!=="image/jpeg",m=png?700:1000,k=Math.min(1,m/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.max(1,Math.round(im.width*k));c.height=Math.max(1,Math.round(im.height*k));c.getContext("2d").drawImage(im,0,0,c.width,c.height);
+var d=c.toDataURL(png?"image/png":"image/jpeg",.85);URL.revokeObjectURL(u);ok({ext:png?"png":"jpg",b64:d.split(",")[1],url:d})};im.src=u})}
+$("file").onchange=async function(){var f=this.files[0];this.value="";if(!f||!imgPath)return;msg("Import de l’image…");
+try{var o=await shrink(f),name="images/"+Date.now()+"."+o.ext;await gh("PUT","/contents/"+name,{message:"Ajout d’une image",content:o.b64});PREV[name]=o.url;setp(imgPath,name);draw();msg("Image ajoutée — pense à Enregistrer.")}
+catch(e){msg("Échec de l’import : "+e.message)}};
 $("q").addEventListener("keydown",function(e){if(e.key!=="Enter")return;var v=this.value.toLowerCase(),f=DATA.teams.filter(function(x){return x.n.toLowerCase().indexOf(v)>-1||x.s.toLowerCase()===v})[0];if(f&&v){st.g=f.id;draw()}});
 draw();
 </script></body></html>
