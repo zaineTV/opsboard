@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="fr"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>OPSBOARD — Call of Duty League</title>
+<style>
+:root{color-scheme:dark;--bg:#0b0b0d;--bg2:#131316;--bg3:#1b1b20;--line:#26262c;--tx:#f4f4f6;--mu:#8b8b95;--ac:#8fd14f;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:light){:root:not([data-theme="dark"]){color-scheme:light;--bg:#f5f5f7;--bg2:#fff;--bg3:#ececf0;--line:#dcdce2;--tx:#14141a;--mu:#62626d}}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:radial-gradient(800px 480px at 85% -8%,color-mix(in srgb,var(--ac) 18%,transparent),transparent),var(--bg);background-attachment:fixed;color:var(--tx);font:15px/1.45 "Inter","Segoe UI",system-ui,sans-serif;letter-spacing:-.01em}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+.app{display:grid;grid-template-columns:76px 1fr;min-height:100vh}
+aside{position:sticky;top:env(safe-area-inset-top,0px);height:100vh;display:flex;flex-direction:column;align-items:center;gap:10px;padding:14px 0;border-right:1px solid var(--line);overflow-y:auto;background:color-mix(in srgb,var(--bg2) 60%,transparent)}
+.g{width:46px;height:46px;border-radius:15px;flex:none;display:grid;place-items:center;font-weight:800;font-size:13px;color:#0b0b0d;box-shadow:inset 0 0 0 1px rgba(255,255,255,.2);transition:transform .15s}
+.g:hover{transform:scale(1.07)}.g.on{box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--tx)}
+.home{background:var(--bg3);color:var(--tx);font-size:18px}
+.sep{width:30px;height:1px;background:var(--line);flex:none}
+main{min-width:0;padding:0 24px 48px}
+header.top{display:flex;align-items:center;gap:16px;padding:12px 24px;margin:0 -24px;position:sticky;top:env(safe-area-inset-top,0px);background:color-mix(in srgb,var(--bg) 78%,transparent);backdrop-filter:blur(16px);z-index:5;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+.brand{font-weight:900;font-size:18px;letter-spacing:-.03em}
+nav{display:flex;gap:4px;margin:0 auto;background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:4px}
+nav button{padding:7px 12px;border-radius:10px;color:var(--mu);font-size:14px}
+nav button:hover,nav button.on{background:var(--bg3);color:var(--tx)}
+.search{display:flex;gap:8px;background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:8px 12px;width:240px;max-width:100%}
+.search input{background:none;border:0;color:var(--tx);font:inherit;flex:1;min-width:0;outline:0}
+.wrap{max-width:1180px;margin:0 auto}
+h2{font-size:21px;margin:40px 0 14px;font-weight:700;letter-spacing:-.02em}
+.hero{background:radial-gradient(600px 240px at 50% 0%,color-mix(in srgb,var(--ac) 35%,transparent),transparent),var(--bg2);border:1px solid var(--line);border-radius:26px;padding:56px 22px;margin-top:14px;text-align:center}
+.hero h1{margin:0 0 10px;font-size:clamp(34px,6vw,60px);font-weight:900;letter-spacing:-.04em}
+.hero p{margin:0 auto;max-width:560px;color:var(--mu);font-size:17px}
+.news{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.card{background:var(--bg2);border:1px solid var(--line);border-radius:18px;padding:18px}
+.card small{color:var(--mu)}.card h3{margin:6px 0}.card p{margin:0;color:var(--mu);font-size:14px}
+.teams{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}
+.rc{aspect-ratio:4/5;border-radius:20px;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;padding:14px 8px;color:#0b0b0d;font-weight:700;text-align:center;position:relative;overflow:hidden;transition:transform .2s}
+.rc:hover{transform:translateY(-4px)}.rc::before{content:"";position:absolute;inset:0;background:linear-gradient(160deg,rgba(255,255,255,.35),transparent 55%,rgba(0,0,0,.25))}
+.rc>*{position:relative}.rc b{font-size:34px;opacity:.6}.rc small{font-weight:600;font-size:12px}
+.title{display:flex;align-items:center;gap:12px;margin:22px 0 14px;flex-wrap:wrap}.title h1{margin:0;font-size:27px;letter-spacing:-.03em}
+.gp{display:grid;grid-template-columns:1fr 320px;gap:22px;align-items:start}
+.players{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+.pl{background:var(--bg2);border:1px solid var(--line);border-radius:20px;padding:8px 8px 14px}
+.ph{aspect-ratio:1/1;border-radius:14px;background:radial-gradient(circle at 50% 30%,var(--bg3),var(--bg));display:grid;place-items:center;font-size:48px;font-weight:900;color:var(--line)}
+.pl h4{margin:10px 4px 0;font-size:16px}.pl p{margin:2px 4px 0;color:var(--mu);font-size:13px}
+.stats{display:flex;flex-wrap:wrap;gap:14px 32px;background:var(--bg2);border:1px solid var(--line);border-radius:18px;padding:16px 22px;margin-bottom:16px}
+.stats small{display:block;color:var(--mu);font-size:12px}.stats b{font-size:22px}
+.box{background:var(--bg2);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:18px}.box h3{margin:0 0 10px;font-size:18px}
+.ev{display:grid;grid-template-columns:130px 1fr auto;gap:12px;align-items:center;padding:14px 10px;border-bottom:1px solid var(--line)}
+.ev .dt{font-weight:700}.ev small{color:var(--mu);display:block;font-weight:400}.ev em{font-style:normal;font-size:12px;background:var(--bg3);border-radius:8px;padding:2px 10px}
+.ev.now em{background:var(--ac);color:#0b0b0d;font-weight:700}
+.tr{display:grid;grid-template-columns:44px 1fr 90px 160px;gap:10px;align-items:center;padding:12px 10px;border-bottom:1px solid var(--line)}
+.tr.h{color:var(--mu);font-size:12px}.tr i{font-style:normal;display:inline-grid;place-items:center;width:30px;height:30px;border-radius:9px;font-size:11px;font-weight:800;color:#0b0b0d;margin-right:8px}
+.tr button{text-align:left;font-weight:600}
+.tb{display:flex;gap:4px;padding:4px;background:var(--bg2);border:1px solid var(--line);border-radius:16px;width:max-content;max-width:100%;overflow-x:auto;margin:6px 0 12px}
+.tb button{padding:8px 14px;border-radius:12px;color:var(--mu);white-space:nowrap}.tb button.on{background:var(--bg3);color:var(--tx)}
+.note{margin-top:30px;color:var(--mu);font-size:12px;text-align:center}
+.empty{background:var(--bg2);border-radius:14px;padding:30px;text-align:center;color:var(--mu)}
+@media(max-width:980px){.gp,.news{grid-template-columns:1fr}nav{margin:0}}
+@media(max-width:700px){.app{grid-template-columns:1fr}aside{position:static;height:auto;flex-direction:row;padding:10px 12px;border-right:0;border-bottom:1px solid var(--line);overflow-x:auto;overflow-y:hidden}.sep{width:1px;height:30px}main{padding:0 14px 40px}header.top{margin:0 -14px;padding:10px 14px}.search{width:100%}nav{width:100%;overflow-x:auto}.ev{grid-template-columns:1fr}.tr{grid-template-columns:36px 1fr 60px}.tr .c4{display:none}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+.pb{padding:8px 14px;border-radius:10px;background:var(--bg2);border:1px solid var(--line)}.pb.pri{background:var(--ac);color:#0b0b0d;font-weight:700;border-color:transparent}
+#lk{opacity:.4}textarea{width:100%;min-height:60vh;background:var(--bg2);color:var(--tx);border:1px solid var(--line);border-radius:14px;padding:14px;font:13px/1.5 ui-monospace,Menlo,Consolas,monospace}
+.row{display:flex;gap:8px;align-items:center;margin-top:12px;flex-wrap:wrap}#ms{color:var(--mu);font-size:13px}
+</style></head><body>
+<div class="app"><aside id="side"></aside><main>
+<header class="top"><span class="brand">OPSBOARD</span><nav id="nav"></nav><label class="search"><span aria-hidden="true">⌕</span><input id="q" placeholder="Chercher une équipe…" aria-label="Chercher une équipe"></label><button class="pb" id="lk" title="Espace admin" aria-label="Espace admin">🔒</button></header>
+<div class="wrap" id="view"></div></main></div>
+<script>
+/* ===== Données : modifie ici (équipes, rosters, calendrier) ===== */
+var DATA=/*S*/{
+season:"2027",
+teams:[
+{id:"opt",n:"OpTic Texas",s:"OPT",c:"#8fd14f",city:"Texas",rk:1,pts:575,ch:"Finaliste (2e)",tt:["Major IV 2026"],pl:["Dashy","Huke","Mercules","Shotzzy"]},
+{id:"lat",n:"Los Angeles Thieves",s:"LAT",c:"#ff4a4a",city:"Los Angeles",rk:2,pts:500,ch:"Top 8 (7–8e)",tt:["Major III 2026"],pl:["aBeZy","HyDra","Nium","Scrap"]},
+{id:"faz",n:"FaZe Vegas",s:"FZV",c:"#f0453a",city:"Las Vegas",rk:3,pts:440,ch:"Champions du monde",tt:["Champions du monde 2026","Major II 2026"],pl:["Simp","Drazah"]},
+{id:"gm",n:"Paris Gentle Mates",s:"GM",c:"#d77bf0",city:"Paris",rk:4,pts:375,ch:"4e",tt:["Major I 2026"],pl:["Estreal","Ghosty","JoeDeceives","Neptune","Sib"]},
+{id:"koi",n:"Toronto KOI",s:"KOI",c:"#f2607f",city:"Toronto",rk:5,pts:290,ch:"Top 8 (7–8e)",tt:[],pl:["Abe","CleanX","Flux","Insight","Kips"]},
+{id:"g2",n:"G2 Minnesota",s:"G2",c:"#e6e6ea",city:"Minnesota",rk:6,pts:250,ch:"5–6e",tt:[],pl:["Envoy","Nastie"]},
+{id:"ryd",n:"Riyadh Falcons",s:"RYD",c:"#2fb86a",city:"Riyad",rk:7,pts:240,ch:"3e",tt:[],pl:["Cellium","Exnid","KiSMET","Pred","qk4b"]},
+{id:"mia",n:"Miami Heretics",s:"MIA",c:"#ff9020",city:"Miami",rk:8,pts:235,ch:"5–6e",tt:[],pl:["MettalZ","ReeaL","Renkor","SupeR"]},
+{id:"c9",n:"Cloud9 New York",s:"C9",c:"#35aaff",city:"New York",rk:null,pts:null,ch:"Non qualifié",tt:[],pl:["Arian","Encourage","Hide","Nejra","Noysii"]},
+{id:"bos",n:"M80 Boston",s:"M80",c:"#4f86ff",city:"Boston",rk:null,pts:null,ch:"Nouvelle franchise",tt:[],pl:["Afro","Purj","Spart","TJHaLy"]},
+{id:"car",n:"Carolina Royal Ravens",s:"CAR",c:"#8b6cff",city:"Caroline",rk:null,pts:null,ch:"Non qualifié",tt:[],pl:["Exceed","Lurqxx","Standy"]},
+{id:"van",n:"Vancouver Surge",s:"VAN",c:"#22cfc4",city:"Vancouver",rk:null,pts:null,ch:"Non qualifié",tt:[],pl:["Mamba","Vik","Nemensions","Wevy"]}
+],
+cal:[
+["6–8 nov. 2026","Monster Launch Invitational","En ligne · 16 équipes · $100 000","now"],
+["4–13 déc. 2026","Kickoff Classic","En ligne · Pro-Am avec les équipes Challengers",""],
+["8–10 janv. 2027","Pro-Am Minor","Tournoi mineur",""],
+["15 janv.–7 févr.","Qualifications Major I","En ligne",""],
+["12–14 févr. 2027","Major I","LAN en Europe",""],
+["26 févr.–4 avr.","Major II","Qualifications puis LAN",""],
+["16 avr.–23 mai","Major III","Hôte : Toronto KOI",""],
+["28 mai–20 juin","Major IV","Fin de saison régulière (Côte Ouest)",""],
+["8–11 juil. 2027","Championnat du monde","Post-saison",""]
+],
+pal:[
+["Major I 2026","Paris Gentle Mates","4-3 contre OpTic Texas"],
+["Major II 2026","FaZe Vegas","4-1 contre OpTic Texas"],
+["Major III 2026","Los Angeles Thieves","4-3 contre OpTic Texas"],
+["Major IV 2026","OpTic Texas",""],
+["Championnat 2026","FaZe Vegas","5-2 contre OpTic Texas"]
+],
+news:[
+["Nouveauté","M80 Boston rejoint la ligue","Nouvelle franchise en 2027, elle remplace Boston Breach."],
+["Saison","Cap sur Modern Warfare 4","La saison 2027 démarre le 4 décembre sur Modern Warfare 4."],
+["Mercato","G2 Minnesota perd Kremp et Skyz","Les deux joueurs sont partis le 30 octobre ; aucun nouveau roster annoncé."]
+]}/*E*/;
+var st={g:null,tab:"Vue d’ensemble"},TABS=["Vue d’ensemble","Équipes","Calendrier","Classement","Palmarès"];
+var $=function(i){return document.getElementById(i)};
+function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function tm(id){return DATA.teams.filter(function(t){return t.id===id})[0]}
+function tile(t,cl){return'<button class="'+cl+'" data-g="'+t.id+'" style="background:'+t.c+'" title="'+esc(t.n)+'" aria-label="'+esc(t.n)+'">'+esc(t.s)+'</button>'}
+function evs(n){return DATA.cal.slice(0,n||99).map(function(e){return'<div class="ev'+(e[3]?' now':'')+'"><div class="dt">'+esc(e[0])+'</div><div><b>'+esc(e[1])+'</b><small>'+esc(e[2])+'</small></div>'+(e[3]?'<em>En cours</em>':'')+'</div>'}).join("")}
+function grid(){return'<div class="teams">'+DATA.teams.map(function(t){return'<button class="rc" data-g="'+t.id+'" style="background:'+t.c+'"><b>'+esc(t.s)+'</b>'+esc(t.n)+'<small>'+esc(t.city)+'</small></button>'}).join("")+'</div>'}
+function home(){
+var h='<div class="hero"><h1>OPSBOARD</h1><p>Toutes les équipes, les rosters, le calendrier et le palmarès de la Call of Duty League, saison '+DATA.season+'.</p></div>';
+h+='<h2>Actualités</h2><div class="news">'+DATA.news.map(function(n){return'<div class="card"><small>'+esc(n[0])+'</small><h3>'+esc(n[1])+'</h3><p>'+esc(n[2])+'</p></div>'}).join("")+'</div>';
+h+='<h2>Prochains rendez-vous</h2>'+evs(4)+'<h2>Les 12 équipes</h2>'+grid();
+return h+'<p class="note">Rosters susceptibles d’évoluer avant le 4 décembre. Données à modifier dans l’objet DATA du fichier.</p>'}
+function team(t){
+var h='<div class="gp"><div><div class="title"><h1 style="color:'+t.c+'">'+esc(t.n)+'</h1></div><div class="stats">';
+h+='<div><small>Classement 2026</small><b>'+(t.rk?t.rk+'e':'—')+'</b></div><div><small>Points CDL 2026</small><b>'+(t.pts||'—')+'</b></div><div><small>Championnat 2026</small><b>'+esc(t.ch)+'</b></div><div><small>Joueurs 2027</small><b>'+t.pl.length+'</b></div></div>';
+h+='<div class="players">'+t.pl.map(function(p){return'<div class="pl"><div class="ph">'+esc(p[0])+'</div><h4>'+esc(p)+'</h4><p>Roster 2027</p></div>'}).join("")+'</div></div>';
+h+='<div class="side"><div class="box"><h3>Palmarès 2026</h3>'+(t.tt.length?t.tt.map(function(x){return'<p style="margin:6px 0">🏆 '+esc(x)+'</p>'}).join(""):'<p style="margin:0;color:var(--mu)">Aucun titre en 2026.</p>')+'</div><div class="box"><h3>Prochain événement</h3>'+evs(1).replace('<em>En cours</em>','')+'</div></div></div>';
+return h}
+function rank(){
+var rows=DATA.teams.filter(function(t){return t.rk}).sort(function(a,b){return a.rk-b.rk});
+return'<div class="title"><h1>Classement 2026</h1></div><div class="tr h"><span>#</span><span>Équipe</span><span>Points</span><span class="c4">Championnat</span></div>'+rows.map(function(t){return'<div class="tr"><b>'+t.rk+'</b><button data-g="'+t.id+'"><i style="background:'+t.c+'">'+esc(t.s)+'</i>'+esc(t.n)+'</button><span>'+t.pts+'</span><span class="c4">'+esc(t.ch)+'</span></div>'}).join("")+'<p class="note">Classement final de la saison 2026 (huit équipes qualifiées au Championnat). Le classement 2027 commence le 4 décembre.</p>'}
+function pal(){return'<div class="title"><h1>Palmarès 2026</h1></div>'+DATA.pal.map(function(p){return'<div class="ev"><div class="dt">'+esc(p[0])+'</div><div><b>'+esc(p[1])+'</b><small>'+esc(p[2])+'</small></div></div>'}).join("")}
+function draw(){
+var t=st.g?tm(st.g):null;
+document.documentElement.style.setProperty("--ac",t?t.c:"#8fd14f");
+$("side").innerHTML='<button class="g home" data-home="1" aria-label="Accueil">⌂</button><span class="sep"></span>'+DATA.teams.map(function(x){return tile(x,"g"+(x.id===st.g?" on":""))}).join("");
+$("nav").innerHTML=TABS.map(function(x){return'<button class="'+(!t&&st.tab===x?'on':'')+'" data-t="'+x+'">'+x+'</button>'}).join("");
+$("view").innerHTML=t?team(t):st.tab==="Équipes"?'<div class="title"><h1>Équipes</h1></div>'+grid():st.tab==="Calendrier"?'<div class="title"><h1>Calendrier 2027</h1></div>'+evs():st.tab==="Classement"?rank():st.tab==="Palmarès"?pal():st.tab==="Édition"?editor():home();
+document.querySelectorAll("[data-g]").forEach(function(b){b.onclick=function(){st.g=b.dataset.g;draw();window.scrollTo(0,0)}});
+document.querySelectorAll("[data-t]").forEach(function(b){b.onclick=function(){st.tab=b.dataset.t;st.g=null;draw();window.scrollTo(0,0)}});
+document.querySelectorAll("[data-home]").forEach(function(b){b.onclick=function(){st.g=null;st.tab="Vue d’ensemble";draw()}});
+if($("sv")){$("sv").onclick=save;$("lo").onclick=function(){try{localStorage.removeItem("ob_tok")}catch(e){}TOK=null;st.tab="Vue d’ensemble";draw()}}
+$("lk").onclick=lock}
+$("q").addEventListener("keydown",function(e){if(e.key!=="Enter")return;var v=this.value.toLowerCase(),f=DATA.teams.filter(function(x){return x.n.toLowerCase().indexOf(v)>-1||x.s.toLowerCase()===v})[0];if(f&&v){st.g=f.id;draw()}});
+/* ===== Édition via GitHub (dépôt zaineTV/opsboard) ===== */
+var GH={o:"zaineTV",r:"opsboard",p:"index.html"},TOK=null;try{TOK=localStorage.getItem("ob_tok")}catch(e){}
+async function gh(m,u,b){var r=await fetch("https://api.github.com/repos/"+GH.o+"/"+GH.r+u,{method:m,cache:"no-store",headers:{Authorization:"Bearer "+TOK,Accept:"application/vnd.github+json"},body:b?JSON.stringify(b):undefined});var j={};try{j=await r.json()}catch(e){}if(!r.ok)throw new Error(j.message||("erreur "+r.status));return j}
+function lock(){if(!TOK){var t=prompt("Colle ton jeton GitHub (il reste uniquement dans ce navigateur) :");if(!t)return;TOK=t.trim();try{localStorage.setItem("ob_tok",TOK)}catch(e){}}st.g=null;st.tab="Édition";draw()}
+function editor(){return'<div class="title"><h1>Édition</h1></div><p class="note" style="text-align:left;margin:0 0 10px">Modifie les données (équipes, joueurs, calendrier, palmarès, actualités), puis enregistre : le site se met à jour en ligne.</p><textarea id="ta" spellcheck="false">'+esc(JSON.stringify(DATA,null,1))+'</textarea><div class="row"><button class="pb pri" id="sv">Enregistrer</button><button class="pb" id="lo">Quitter</button><span id="ms"></span></div>'}
+function b64(s){var b=new TextEncoder().encode(s),r="",i=0;for(;i<b.length;i+=32768)r+=String.fromCharCode.apply(null,b.subarray(i,i+32768));return btoa(r)}
+async function save(){var ms=$("ms");ms.textContent="Enregistrement…";
+try{var d=JSON.parse($("ta").value),cur=await gh("GET","/contents/"+GH.p),h=new TextDecoder().decode(Uint8Array.from(atob(cur.content.replace(/\n/g,"")),function(c){return c.charCodeAt(0)}));
+if(!/var DATA=\/\*S\*\/[\s\S]*?\/\*E\*\/;/.test(h))throw new Error("le fichier du dépôt ne contient pas les repères de données");
+var j=JSON.stringify(d).replace(/</g,"\\u003c"),n=h.replace(/var DATA=\/\*S\*\/[\s\S]*?\/\*E\*\/;/,function(){return"var DATA=/*S*/"+j+"/*E*/;"});
+await gh("PUT","/contents/"+GH.p,{message:"Mise à jour du contenu",content:b64(n),sha:cur.sha});
+DATA=d;ms.textContent="Enregistré ✔ — visible en ligne dans quelques secondes"}
+catch(e){ms.textContent="Échec : "+e.message}}
+draw();
+</script></body></html>
