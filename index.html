@@ -62,9 +62,13 @@ h2{font-size:21px;margin:40px 0 14px;font-weight:700;letter-spacing:-.02em}
 .pb{padding:8px 14px;border-radius:10px;background:var(--bg2);border:1px solid var(--line)}.pb.pri{background:var(--ac);color:#0b0b0d;font-weight:700;border-color:transparent}
 #lk{opacity:.4}textarea{width:100%;min-height:60vh;background:var(--bg2);color:var(--tx);border:1px solid var(--line);border-radius:14px;padding:14px;font:13px/1.5 ui-monospace,Menlo,Consolas,monospace}
 .row{display:flex;gap:8px;align-items:center;margin-top:12px;flex-wrap:wrap}#ms{color:var(--mu);font-size:13px}
+.ed{outline:1px dashed rgba(128,128,140,.6);border-radius:4px;padding:0 3px;min-width:1.5ch;display:inline-block;cursor:text}.ed:focus{outline:2px solid var(--ac)}
+.x{background:#7a2a2a;color:#fff;border-radius:8px;padding:2px 8px;font-size:12px;margin-top:6px}
+.add{border:1px dashed var(--mu);color:var(--mu);border-radius:12px;padding:9px 14px;font-size:13px;margin:10px 0}.add:hover{color:var(--tx);border-color:var(--tx)}
+.ed2{color:var(--mu);font-size:13px}input[type=color]{width:28px;height:24px;padding:0;border:0;background:none;cursor:pointer}
 </style></head><body>
 <div class="app"><aside id="side"></aside><main>
-<header class="top"><span class="brand">OPSBOARD</span><nav id="nav"></nav><label class="search"><span aria-hidden="true">⌕</span><input id="q" placeholder="Chercher une équipe…" aria-label="Chercher une équipe"></label><button class="pb" id="lk" title="Espace admin" aria-label="Espace admin">🔒</button></header>
+<header class="top"><span class="brand">OPSBOARD</span><nav id="nav"></nav><label class="search"><span aria-hidden="true">⌕</span><input id="q" placeholder="Chercher une équipe…" aria-label="Chercher une équipe"></label><span id="bar" class="row" style="margin:0"></span></header>
 <div class="wrap" id="view"></div></main></div>
 <script>
 /* ===== Données : modifie ici (équipes, rosters, calendrier) ===== */
@@ -85,7 +89,7 @@ teams:[
 {id:"van",n:"Vancouver Surge",s:"VAN",c:"#22cfc4",city:"Vancouver",rk:null,pts:null,ch:"Non qualifié",tt:[],pl:["Mamba","Vik","Nemensions","Wevy"]}
 ],
 cal:[
-["6–8 nov. 2026","Monster Launch Invitational","En ligne · 16 équipes · $100 000","now"],
+["6–8 nov. 2026","Monster Launch Invitational","En ligne · 16 équipes · $100 000","En cours"],
 ["4–13 déc. 2026","Kickoff Classic","En ligne · Pro-Am avec les équipes Challengers",""],
 ["8–10 janv. 2027","Pro-Am Minor","Tournoi mineur",""],
 ["15 janv.–7 févr.","Qualifications Major I","En ligne",""],
@@ -107,52 +111,69 @@ news:[
 ["Saison","Cap sur Modern Warfare 4","La saison 2027 démarre le 4 décembre sur Modern Warfare 4."],
 ["Mercato","G2 Minnesota perd Kremp et Skyz","Les deux joueurs sont partis le 30 octobre ; aucun nouveau roster annoncé."]
 ]}/*E*/;
-var st={g:null,tab:"Vue d’ensemble"},TABS=["Vue d’ensemble","Équipes","Calendrier","Classement","Palmarès"];
+var st={g:null,tab:"Vue d’ensemble"},TABS=["Vue d’ensemble","Équipes","Calendrier","Classement","Palmarès"],ED=false,SAVED=JSON.stringify(DATA);
 var $=function(i){return document.getElementById(i)};
 function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
-function tm(id){return DATA.teams.filter(function(t){return t.id===id})[0]}
+function get(p){return p.split(".").reduce(function(o,k){return o[k]},DATA)}
+function setp(p,v){var a=p.split("."),k=a.pop();get(a.join("."))[k]=v}
+function gi(id){for(var k=0;k<DATA.teams.length;k++)if(DATA.teams[k].id===id)return k;return -1}
+function T(p){var v=get(p);return ED?'<span class="ed" contenteditable="true" data-e="'+p+'">'+esc(v)+'</span>':esc(v)}
+function X(p,l){return ED?'<button class="x" data-del="'+p+'">'+(l||"×")+'</button>':""}
+function A(p,l){return ED?'<button class="add" data-add="'+p+'">+ '+l+'</button>':""}
+function C(p){return ED?'<input type="color" data-c="'+p+'" value="'+get(p)+'" aria-label="Couleur">':""}
+var NEW={teams:function(){return{id:"t"+Date.now(),n:"Nouvelle équipe",s:"NEW",c:"#8b8b95",city:"Ville",rk:"",pts:"",ch:"—",tt:[],pl:[]}},pl:function(){return"Nouveau joueur"},tt:function(){return"Nouveau titre"},cal:function(){return["Date","Événement","Détails",""]},pal:function(){return["Événement","Vainqueur","Score"]},news:function(){return["Catégorie","Titre","Texte"]}};
 function tile(t,cl){return'<button class="'+cl+'" data-g="'+t.id+'" style="background:'+t.c+'" title="'+esc(t.n)+'" aria-label="'+esc(t.n)+'">'+esc(t.s)+'</button>'}
-function evs(n){return DATA.cal.slice(0,n||99).map(function(e){return'<div class="ev'+(e[3]?' now':'')+'"><div class="dt">'+esc(e[0])+'</div><div><b>'+esc(e[1])+'</b><small>'+esc(e[2])+'</small></div>'+(e[3]?'<em>En cours</em>':'')+'</div>'}).join("")}
-function grid(){return'<div class="teams">'+DATA.teams.map(function(t){return'<button class="rc" data-g="'+t.id+'" style="background:'+t.c+'"><b>'+esc(t.s)+'</b>'+esc(t.n)+'<small>'+esc(t.city)+'</small></button>'}).join("")+'</div>'}
+function evs(n,ro){return DATA.cal.slice(0,n||99).map(function(e,i){var q="cal."+i,U=ro?function(p){return esc(get(p))}:T;
+return'<div class="ev'+(e[3]?' now':'')+'"><div class="dt">'+U(q+".0")+'</div><div><b>'+U(q+".1")+'</b><small>'+U(q+".2")+'</small></div>'+(ED&&!ro?'<span class="row" style="margin:0">'+T(q+".3")+X(q)+'</span>':(e[3]?'<em>'+esc(e[3])+'</em>':''))+'</div>'}).join("")}
+function grid(){return'<div class="teams">'+DATA.teams.map(function(t){return'<button class="rc" data-g="'+t.id+'" style="background:'+t.c+'"><b>'+esc(t.s)+'</b>'+esc(t.n)+'<small>'+esc(t.city)+'</small></button>'}).join("")+'</div>'+A("teams","Ajouter une équipe")}
 function home(){
-var h='<div class="hero"><h1>OPSBOARD</h1><p>Toutes les équipes, les rosters, le calendrier et le palmarès de la Call of Duty League, saison '+DATA.season+'.</p></div>';
-h+='<h2>Actualités</h2><div class="news">'+DATA.news.map(function(n){return'<div class="card"><small>'+esc(n[0])+'</small><h3>'+esc(n[1])+'</h3><p>'+esc(n[2])+'</p></div>'}).join("")+'</div>';
-h+='<h2>Prochains rendez-vous</h2>'+evs(4)+'<h2>Les 12 équipes</h2>'+grid();
-return h+'<p class="note">Rosters susceptibles d’évoluer avant le 4 décembre. Données à modifier dans l’objet DATA du fichier.</p>'}
-function team(t){
-var h='<div class="gp"><div><div class="title"><h1 style="color:'+t.c+'">'+esc(t.n)+'</h1></div><div class="stats">';
-h+='<div><small>Classement 2026</small><b>'+(t.rk?t.rk+'e':'—')+'</b></div><div><small>Points CDL 2026</small><b>'+(t.pts||'—')+'</b></div><div><small>Championnat 2026</small><b>'+esc(t.ch)+'</b></div><div><small>Joueurs 2027</small><b>'+t.pl.length+'</b></div></div>';
-h+='<div class="players">'+t.pl.map(function(p){return'<div class="pl"><div class="ph">'+esc(p[0])+'</div><h4>'+esc(p)+'</h4><p>Roster 2027</p></div>'}).join("")+'</div></div>';
-h+='<div class="side"><div class="box"><h3>Palmarès 2026</h3>'+(t.tt.length?t.tt.map(function(x){return'<p style="margin:6px 0">🏆 '+esc(x)+'</p>'}).join(""):'<p style="margin:0;color:var(--mu)">Aucun titre en 2026.</p>')+'</div><div class="box"><h3>Prochain événement</h3>'+evs(1).replace('<em>En cours</em>','')+'</div></div></div>';
+var h='<div class="hero"><h1>OPSBOARD</h1><p>Toutes les équipes, les rosters, le calendrier et le palmarès de la Call of Duty League, saison '+DATA.season+'.</p></div><h2>Actualités</h2><div class="news">'+DATA.news.map(function(n,i){var q="news."+i;return'<div class="card"><small>'+T(q+".0")+'</small><h3>'+T(q+".1")+'</h3><p>'+T(q+".2")+'</p>'+X(q)+'</div>'}).join("")+'</div>'+A("news","Ajouter une actualité");
+return h+'<h2>Prochains rendez-vous</h2>'+evs(4,true)+'<h2>Les '+DATA.teams.length+' équipes</h2>'+grid()+'<p class="note">Rosters susceptibles d’évoluer avant le 4 décembre.</p>'}
+function team(i){var t=DATA.teams[i],b="teams."+i,h='<div class="gp"><div><div class="title"><h1 style="color:'+t.c+'">'+T(b+".n")+'</h1>';
+if(ED)h+=C(b+".c")+'<span class="ed2">Sigle : '+T(b+".s")+' · Ville : '+T(b+".city")+'</span>'+X(b,"Supprimer l’équipe");
+h+='</div><div class="stats"><div><small>Classement 2026</small><b>'+(ED?T(b+".rk"):(t.rk?t.rk+"e":"—"))+'</b></div><div><small>Points CDL 2026</small><b>'+(ED?T(b+".pts"):(t.pts||"—"))+'</b></div><div><small>Championnat 2026</small><b>'+T(b+".ch")+'</b></div><div><small>Joueurs 2027</small><b>'+t.pl.length+'</b></div></div>';
+h+='<div class="players">'+t.pl.map(function(p,j){var q=b+".pl."+j;return'<div class="pl"><div class="ph">'+esc((p||"?")[0])+'</div><h4>'+T(q)+'</h4><p>Roster 2027</p>'+X(q)+'</div>'}).join("")+'</div>'+A(b+".pl","Ajouter un joueur")+'</div>';
+h+='<div class="side"><div class="box"><h3>Palmarès 2026</h3>'+(t.tt.length?t.tt.map(function(x,k){var q=b+".tt."+k;return'<p style="margin:6px 0">🏆 '+T(q)+' '+X(q)+'</p>'}).join(""):'<p style="margin:0;color:var(--mu)">Aucun titre en 2026.</p>')+A(b+".tt","Ajouter un titre")+'</div><div class="box"><h3>Prochain événement</h3>'+evs(1,true)+'</div></div></div>';
 return h}
-function rank(){
-var rows=DATA.teams.filter(function(t){return t.rk}).sort(function(a,b){return a.rk-b.rk});
-return'<div class="title"><h1>Classement 2026</h1></div><div class="tr h"><span>#</span><span>Équipe</span><span>Points</span><span class="c4">Championnat</span></div>'+rows.map(function(t){return'<div class="tr"><b>'+t.rk+'</b><button data-g="'+t.id+'"><i style="background:'+t.c+'">'+esc(t.s)+'</i>'+esc(t.n)+'</button><span>'+t.pts+'</span><span class="c4">'+esc(t.ch)+'</span></div>'}).join("")+'<p class="note">Classement final de la saison 2026 (huit équipes qualifiées au Championnat). Le classement 2027 commence le 4 décembre.</p>'}
-function pal(){return'<div class="title"><h1>Palmarès 2026</h1></div>'+DATA.pal.map(function(p){return'<div class="ev"><div class="dt">'+esc(p[0])+'</div><div><b>'+esc(p[1])+'</b><small>'+esc(p[2])+'</small></div></div>'}).join("")}
+function rank(){var rows=DATA.teams.filter(function(t){return t.rk}).sort(function(a,b){return a.rk-b.rk});
+return'<div class="title"><h1>Classement 2026</h1></div><div class="tr h"><span>#</span><span>Équipe</span><span>Points</span><span class="c4">Championnat</span></div>'+rows.map(function(t){return'<div class="tr"><b>'+esc(t.rk)+'</b><button data-g="'+t.id+'"><i style="background:'+t.c+'">'+esc(t.s)+'</i>'+esc(t.n)+'</button><span>'+esc(t.pts)+'</span><span class="c4">'+esc(t.ch)+'</span></div>'}).join("")+'<p class="note">Classement final de la saison 2026. Le classement 2027 commence le 4 décembre.</p>'}
+function pal(){return'<div class="title"><h1>Palmarès 2026</h1></div>'+DATA.pal.map(function(p,i){var q="pal."+i;return'<div class="ev"><div class="dt">'+T(q+".0")+'</div><div><b>'+T(q+".1")+'</b><small>'+T(q+".2")+'</small></div>'+X(q)+'</div>'}).join("")+A("pal","Ajouter un résultat")}
 function draw(){
-var t=st.g?tm(st.g):null;
-document.documentElement.style.setProperty("--ac",t?t.c:"#8fd14f");
-$("side").innerHTML='<button class="g home" data-home="1" aria-label="Accueil">⌂</button><span class="sep"></span>'+DATA.teams.map(function(x){return tile(x,"g"+(x.id===st.g?" on":""))}).join("");
-$("nav").innerHTML=TABS.map(function(x){return'<button class="'+(!t&&st.tab===x?'on':'')+'" data-t="'+x+'">'+x+'</button>'}).join("");
-$("view").innerHTML=t?team(t):st.tab==="Équipes"?'<div class="title"><h1>Équipes</h1></div>'+grid():st.tab==="Calendrier"?'<div class="title"><h1>Calendrier 2027</h1></div>'+evs():st.tab==="Classement"?rank():st.tab==="Palmarès"?pal():st.tab==="Édition"?editor():home();
+document.body.classList.toggle("edit",ED);
+var i=st.g?gi(st.g):-1;if(st.g&&i<0)st.g=null;
+document.documentElement.style.setProperty("--ac",i>-1?DATA.teams[i].c:"#8fd14f");
+$("side").innerHTML='<button class="g home" data-home="1" aria-label="Accueil">⌂</button><span class="sep"></span>'+DATA.teams.map(function(x){return tile(x,"g"+(x.id===st.g?" on":""))}).join("")+(ED?'<button class="g home" data-add="teams" aria-label="Ajouter une équipe">+</button>':"");
+$("nav").innerHTML=TABS.map(function(x){return'<button class="'+(i<0&&st.tab===x?'on':'')+'" data-t="'+x+'">'+x+'</button>'}).join("");
+$("view").innerHTML=i>-1?team(i):st.tab==="Équipes"?'<div class="title"><h1>Équipes</h1></div>'+grid():st.tab==="Calendrier"?'<div class="title"><h1>Calendrier '+DATA.season+'</h1></div>'+evs()+A("cal","Ajouter un événement"):st.tab==="Classement"?rank():st.tab==="Palmarès"?pal():home();
 document.querySelectorAll("[data-g]").forEach(function(b){b.onclick=function(){st.g=b.dataset.g;draw();window.scrollTo(0,0)}});
 document.querySelectorAll("[data-t]").forEach(function(b){b.onclick=function(){st.tab=b.dataset.t;st.g=null;draw();window.scrollTo(0,0)}});
 document.querySelectorAll("[data-home]").forEach(function(b){b.onclick=function(){st.g=null;st.tab="Vue d’ensemble";draw()}});
-if($("sv")){$("sv").onclick=save;$("lo").onclick=function(){try{localStorage.removeItem("ob_tok")}catch(e){}TOK=null;st.tab="Vue d’ensemble";draw()}}
-$("lk").onclick=lock}
-$("q").addEventListener("keydown",function(e){if(e.key!=="Enter")return;var v=this.value.toLowerCase(),f=DATA.teams.filter(function(x){return x.n.toLowerCase().indexOf(v)>-1||x.s.toLowerCase()===v})[0];if(f&&v){st.g=f.id;draw()}});
+bar()}
+function msg(t){var m=$("ms");if(m)m.textContent=t}
+function bar(){var b=$("bar");
+if(!TOK){b.innerHTML='<button class="pb" id="lg" title="Espace admin" aria-label="Espace admin" style="opacity:.4">🔒</button><span id="ms"></span>';$("lg").onclick=login;return}
+b.innerHTML=(ED?'<button class="pb pri" id="sv">Enregistrer</button><button class="pb" id="cn">Annuler</button>':'<button class="pb" id="ed">Mode édition</button><button class="pb" id="lo">Quitter</button>')+'<span id="ms"></span>';
+if(ED){$("sv").onclick=save;$("cn").onclick=function(){DATA=JSON.parse(SAVED);ED=false;draw()}}
+else{$("ed").onclick=function(){ED=true;draw()};$("lo").onclick=function(){try{localStorage.removeItem("ob_tok")}catch(e){}TOK=null;ED=false;draw()}}}
 /* ===== Édition via GitHub (dépôt zaineTV/opsboard) ===== */
 var GH={o:"zaineTV",r:"opsboard",p:"index.html"},TOK=null;try{TOK=localStorage.getItem("ob_tok")}catch(e){}
 async function gh(m,u,b){var r=await fetch("https://api.github.com/repos/"+GH.o+"/"+GH.r+u,{method:m,cache:"no-store",headers:{Authorization:"Bearer "+TOK,Accept:"application/vnd.github+json"},body:b?JSON.stringify(b):undefined});var j={};try{j=await r.json()}catch(e){}if(!r.ok)throw new Error(j.message||("erreur "+r.status));return j}
-function lock(){if(!TOK){var t=prompt("Colle ton jeton GitHub (il reste uniquement dans ce navigateur) :");if(!t)return;TOK=t.trim();try{localStorage.setItem("ob_tok",TOK)}catch(e){}}st.g=null;st.tab="Édition";draw()}
-function editor(){return'<div class="title"><h1>Édition</h1></div><p class="note" style="text-align:left;margin:0 0 10px">Modifie les données (équipes, joueurs, calendrier, palmarès, actualités), puis enregistre : le site se met à jour en ligne.</p><textarea id="ta" spellcheck="false">'+esc(JSON.stringify(DATA,null,1))+'</textarea><div class="row"><button class="pb pri" id="sv">Enregistrer</button><button class="pb" id="lo">Quitter</button><span id="ms"></span></div>'}
+async function login(){var t=prompt("Colle ton jeton GitHub (il reste uniquement dans ce navigateur) :");if(!t)return;TOK=t.trim();
+try{await gh("GET","");try{localStorage.setItem("ob_tok",TOK)}catch(e){}draw()}catch(e){TOK=null;alert("Connexion refusée : "+e.message+"\n(404 = le jeton n’a pas accès à ce dépôt ; 401 = jeton invalide ou expiré)")}}
 function b64(s){var b=new TextEncoder().encode(s),r="",i=0;for(;i<b.length;i+=32768)r+=String.fromCharCode.apply(null,b.subarray(i,i+32768));return btoa(r)}
-async function save(){var ms=$("ms");ms.textContent="Enregistrement…";
-try{var d=JSON.parse($("ta").value),cur=await gh("GET","/contents/"+GH.p),h=new TextDecoder().decode(Uint8Array.from(atob(cur.content.replace(/\n/g,"")),function(c){return c.charCodeAt(0)}));
-if(!/var DATA=\/\*S\*\/[\s\S]*?\/\*E\*\/;/.test(h))throw new Error("le fichier du dépôt ne contient pas les repères de données");
-var j=JSON.stringify(d).replace(/</g,"\\u003c"),n=h.replace(/var DATA=\/\*S\*\/[\s\S]*?\/\*E\*\/;/,function(){return"var DATA=/*S*/"+j+"/*E*/;"});
+async function save(){msg("Enregistrement…");
+try{var cur=await gh("GET","/contents/"+GH.p),h=new TextDecoder().decode(Uint8Array.from(atob(cur.content.replace(/\n/g,"")),function(c){return c.charCodeAt(0)})),re=/var DATA=\/\*S\*\/[\s\S]*?\/\*E\*\/;/;
+if(!re.test(h))throw new Error("repères de données introuvables dans le fichier du dépôt");
+var j=JSON.stringify(DATA).replace(/</g,"\\u003c"),n=h.replace(re,function(){return"var DATA=/*S*/"+j+"/*E*/;"});
 await gh("PUT","/contents/"+GH.p,{message:"Mise à jour du contenu",content:b64(n),sha:cur.sha});
-DATA=d;ms.textContent="Enregistré ✔ — visible en ligne dans quelques secondes"}
-catch(e){ms.textContent="Échec : "+e.message}}
+SAVED=JSON.stringify(DATA);ED=false;draw();msg("Enregistré ✔ — visible en ligne dans quelques secondes")}
+catch(e){msg("Échec : "+e.message)}}
+document.addEventListener("input",function(e){var t=e.target;if(t.dataset&&t.dataset.e!==undefined)setp(t.dataset.e,t.textContent)});
+document.addEventListener("keydown",function(e){if(e.key==="Enter"&&e.target.dataset&&e.target.dataset.e!==undefined){e.preventDefault();e.target.blur()}});
+document.addEventListener("change",function(e){var t=e.target;if(t.dataset&&t.dataset.c){setp(t.dataset.c,t.value);draw()}});
+document.addEventListener("click",function(e){var t=e.target.closest("[data-del],[data-add]");if(!t||!ED)return;
+if(t.dataset.del){var a=t.dataset.del.split("."),i=+a.pop();get(a.join(".")).splice(i,1);if(a.join(".")==="teams")st.g=null;draw()}
+else{var p=t.dataset.add,k=p.split(".").pop(),n=NEW[k]();get(p).push(n);if(k==="teams")st.g=n.id;draw()}});
+$("q").addEventListener("keydown",function(e){if(e.key!=="Enter")return;var v=this.value.toLowerCase(),f=DATA.teams.filter(function(x){return x.n.toLowerCase().indexOf(v)>-1||x.s.toLowerCase()===v})[0];if(f&&v){st.g=f.id;draw()}});
 draw();
 </script></body></html>
