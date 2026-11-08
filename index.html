@@ -91,6 +91,15 @@ h2.oldh{font-size:18px;color:var(--mu);margin:30px 0 14px}
 .mrow{display:grid;grid-template-columns:1fr 1fr 60px 14px 60px auto;gap:10px;align-items:center;padding:12px;margin-top:6px;border:1px solid var(--line);border-radius:14px;background:var(--bg2)}.mrow .md{color:var(--mu)}.mrow .ms{text-align:center;font-weight:800;font-size:18px;border-radius:8px;padding:2px 0}.mrow .bw{background:color-mix(in srgb,var(--ac) 22%,transparent)}
 .gp2{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:16px}.bm .pb{margin:6px;font-size:12px;padding:4px 10px}
 @media(max-width:700px){.mrow{grid-template-columns:1fr 1fr 50px 10px 50px auto}.gp2{grid-template-columns:1fr}}
+.mh{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:6px}.mh h1{margin:0;font-size:24px;flex:1}.mh h1 small{font-size:14px;color:var(--mu);font-weight:400}.mh .lg{width:56px;height:56px;border-radius:14px;font-size:20px}.mdt{text-align:right;color:var(--tx)}.mdt small{color:var(--mu)}
+.sc .tm{display:flex;flex-direction:row;align-items:center;gap:14px;font-size:20px;min-width:0}.sc .big span.lo,.mpill span.lo{opacity:.55;font-weight:400}
+.vt{text-align:center;margin:6px 0 10px}.vt span{display:inline-block;background:var(--bg3);border-radius:10px;padding:10px 22px;font-weight:600}
+.ms2{display:flex;gap:16px;overflow-x:auto;padding:8px 2px 14px;justify-content:center}.mc{min-width:150px;display:grid;gap:6px;justify-items:center;text-align:center}.mc small{color:var(--mu)}
+.mimg{width:150px;height:84px;border-radius:8px;background:var(--bg3) center/cover no-repeat;position:relative}.mimg .cam{left:4px;top:4px;font-size:11px}
+.mpill{display:flex;align-items:center;gap:8px;justify-content:center;border:2px solid var(--line);border-radius:8px;padding:6px 10px;font-size:18px;min-width:150px;background:var(--bg2)}.mpill span{font-weight:800}
+.lg.sm{width:22px;height:22px;font-size:10px;border-radius:6px}.lg.sm.hv{border-radius:0}
+.pt{border:1px solid var(--line);border-radius:14px;overflow-x:auto;background:var(--bg2)}.pth,.ptr{display:grid;grid-template-columns:minmax(120px,2fr) repeat(3,minmax(60px,1fr)) minmax(60px,1fr) minmax(90px,1.4fr) 34px;gap:8px;padding:11px 14px;align-items:center;min-width:560px}
+.pth{background:var(--bg3);font-weight:700;font-size:13px}.ptr:nth-of-type(even){background:color-mix(in srgb,var(--bg3) 45%,transparent)}.ptt{display:flex;align-items:center;gap:10px;padding:12px 14px;font-weight:700;min-width:560px}.good{color:#3fae52}.bad{color:#e5483a}
 </style></head><body>
 <div class="app"><aside id="side"></aside><main>
 <header class="top"><span class="brand">OPSBOARD</span><nav id="nav"></nav><label class="search"><span aria-hidden="true">⌕</span><input id="q" placeholder="Chercher une équipe…" aria-label="Chercher une équipe"></label><span id="bar" class="row" style="margin:0"></span></header>
@@ -226,24 +235,26 @@ function agg(m,s){var o={},l=[];m.x.xm.forEach(function(r){((r[4]||{})[s]||[]).f
 function atab(g,nm,col){var h='<div class="box"><h3 style="color:'+col+'">'+esc(nm)+'</h3><div class="xh" style="--n:5"><span>Joueur</span><span>Kills</span><span>Morts</span><span>K/D</span><span>Dégâts</span><span></span></div>';g.forEach(function(r){h+='<div class="xt" style="--n:5"><span>'+esc(r[0])+'</span><span>'+r[1]+'</span><span>'+r[2]+'</span><span>'+(r[2]>0?(r[1]/r[2]).toFixed(2):"—")+'</span><span>'+r[3]+'</span><span></span></div>'});return h+'</div>'}
 function msum(a){var k=0,d=0,g=0;a.forEach(function(q){k+=pn(q[1])||0;d+=pn(q[2])||0;g+=pn(q[3])||0});return{k:k,d:d,g:g}}
 function sline(nm,col,u){return'<span style="color:'+col+'"><b>'+esc(nm)+'</b></span> : '+u.k+' kills · '+u.d+' morts · K/D '+(u.d>0?(u.k/u.d).toFixed(2):"—")+' · '+u.g+' dégâts'}
-function mpage(p){var m=get(p);if(!m.x)m.x={xm:[],pa:[],pb:[]};var x=p+".x",ca=m.ac||"#8b8b95",cb=m.bc||"#8b8b95",sub=st.ms||"Par map",
-h='<div class="title"><button class="pb" data-mback="1">← Retour</button><h1>'+T(p+".ev")+' <small style="color:var(--mu);font-size:15px">'+T(p+".bo")+'</small></h1></div>';
-h+='<div class="sc"><div class="tm">'+LG(p+".la",m.a,ca)+'<b>'+T(p+".a")+'</b></div><div class="big">'+T(p+".sa")+' - '+T(p+".sb")+'</div><div class="tm">'+LG(p+".lb",m.b,cb)+'<b>'+T(p+".b")+'</b></div></div><p class="ed2" style="text-align:center">'+T(p+".st")+' · '+T(p+".dt")+' '+T(p+".tm")+'</p>';
-h+='<h2>Score des maps</h2>';
-m.x.xm.forEach(function(r,j){var q=x+".xm."+j,a=pn(r[2]),b=pn(r[3]),w=a!==null&&b!==null;if(!r[4])r[4]={pa:[],pb:[]};
-h+='<div class="mrow"><span>'+T(q+".0")+'</span><span class="md">'+T(q+".1")+'</span><span class="ms'+(w&&a>b?' bw':'')+'">'+T(q+".2")+'</span><span>-</span><span class="ms'+(w&&b>a?' bw':'')+'">'+T(q+".3")+'</span>'+X(q)+'</div>'});
-if(!m.x.xm.length&&!ED)h+='<div class="empty">Aucune map renseignée.</div>';h+=A(x+".xm","Ajouter une map");
-var ta=agg(m,"pa"),tb=agg(m,"pb"),auto=ta.length||tb.length,any=auto||(m.x.pa||[]).length||(m.x.pb||[]).length;
-h+='<h2>Statistiques</h2>';
-if(any)h+='<div class="box"><h3>Total du match</h3><p style="margin:4px 0">'+sline(m.a,ca,msum(auto?ta:(m.x.pa||[])))+'</p><p style="margin:4px 0">'+sline(m.b,cb,msum(auto?tb:(m.x.pb||[])))+'</p></div>';
-h+='<div class="tabs">'+["Par map","Cumulé"].map(function(y){return'<button class="'+(sub===y?'on':'')+'" data-ms="'+y+'">'+y+'</button>'}).join("")+'</div>';
-if(sub==="Cumulé")return h+(auto?'<p class="ed2" style="margin:0 0 8px">Total calculé automatiquement à partir des stats de chaque map.</p><div class="gp2">'+atab(ta,m.a,ca)+atab(tb,m.b,cb)+'</div>':'<div class="gp2">'+ptab(x+".pa",m.a,ca)+ptab(x+".pb",m.b,cb)+'</div>');
-var none=true;
-m.x.xm.forEach(function(r,j){var q=x+".xm."+j;if(!(ED||r[4].pa.length||r[4].pb.length))return;none=false;
-h+='<h3 style="margin:16px 0 4px">'+esc(r[0])+' <small style="color:var(--mu);font-weight:400">'+esc(r[1])+' · '+esc(r[2])+' - '+esc(r[3])+'</small></h3>';
-if(r[4].pa.length||r[4].pb.length)h+='<p class="ed2" style="margin:4px 2px">'+sline(m.a,ca,msum(r[4].pa))+'<br>'+sline(m.b,cb,msum(r[4].pb))+'</p>';
-h+='<div class="gp2">'+ptab(q+".4.pa",m.a,ca)+ptab(q+".4.pb",m.b,cb)+'</div>'});
-if(none)h+='<div class="empty">Aucune stat de joueur par map pour l’instant.</div>';return h}
+function kdc(k,d){var v=d>0?k/d:null;return v===null?'<span>—</span>':'<span class="'+(v>1?'good':v<1?'bad':'')+'">'+v.toFixed(2).replace(".",",")+'</span>'}
+function pmc(k,d){var v=k-d;return'<span class="'+(v>0?'good':v<0?'bad':'')+'">'+(v>0?"+":"")+v+'</span>'}
+function LS(p,l,c){var v=get(p);return'<i class="lg sm'+(v?' hv':'')+'" style="'+(v?'background:url('+esc(U(v))+') center/contain no-repeat':'background:'+c)+'">'+(v?'':esc((l||"?")[0]))+'</i>'}
+function ptb(p,m,ca,cb,ra,rb,pa,pb){var h='<div class="pt"><div class="pth"><span>Joueur</span><span>Tue</span><span>Décès</span><span>K/D</span><span>+/-</span><span>Dommages</span><span></span></div>';
+[[m.a,ca,ra,pa,p+".la"],[m.b,cb,rb,pb,p+".lb"]].forEach(function(s){h+='<div class="ptt" style="background:color-mix(in srgb,'+s[1]+' 24%,transparent)">'+LS(s[4],s[0],s[1])+esc(s[0])+'</div>';
+s[2].forEach(function(r,j){var q=s[3]?s[3]+"."+j:"",k=pn(r[1])||0,d=pn(r[2])||0,g=pn(r[3])||0,c=function(i){return s[3]?T(q+"."+i):esc(r[i])};
+h+='<div class="ptr"><span>'+c(0)+'</span><span>'+c(1)+'</span><span>'+c(2)+'</span>'+kdc(k,d)+pmc(k,d)+'<span>'+(s[3]?T(q+".3"):g.toLocaleString("fr-FR"))+'</span><span>'+(s[3]?X(q):"")+'</span></div>'});
+if(s[3])h+='<div style="padding:4px 14px">'+A(s[3],"Ajouter un joueur")+'</div>'});return h+'</div>'}
+function mstrip(m,x,ca,cb){var h='<div class="ms2">';m.x.xm.forEach(function(r,j){var q=x+".xm."+j,a=pn(r[2]),b=pn(r[3]),w=a!==null&&b!==null&&a!==b,wc=w?(a>b?ca:cb):"var(--line)";
+h+='<div class="mc"><small>'+T(q+".1")+'</small><div class="mimg"'+BG(q+".5")+'>'+IB(q+".5")+'</div><b>'+T(q+".0")+'</b><div class="mpill" style="border-color:'+wc+'">'+LS(x.replace(/\.x$/,"")+".la",m.a,ca)+'<span class="'+(w&&b>a?'lo':'')+'">'+T(q+".2")+'</span>-<span class="'+(w&&a>b?'lo':'')+'">'+T(q+".3")+'</span>'+LS(x.replace(/\.x$/,"")+".lb",m.b,cb)+'</div>'+(ED?X(q):'')+'</div>'});return h+'</div>'}
+function mpage(p){var m=get(p);if(!m.x)m.x={xm:[],pa:[],pb:[]};var x=p+".x",ca=m.ac||"#8b8b95",cb=m.bc||"#8b8b95",sub=st.ms||"ov",sa=pn(m.sa),sb=pn(m.sb),wa=sa!==null&&sb!==null&&sa>sb,wb=sa!==null&&sb!==null&&sb>sa;
+m.x.xm.forEach(function(r){if(!r[4])r[4]={pa:[],pb:[]}});
+var h='<div class="title"><button class="pb" data-mback="1">← Retour</button></div><div class="mh">'+LG(p+".le",m.ev,"#2b2b33")+'<h1 style="color:var(--ac)">'+T(p+".ev")+' <small>'+T(p+".bo")+'</small></h1><div class="mdt">'+T(p+".dt")+' '+T(p+".tm")+'<br><small>'+T(p+".st")+'</small></div></div>';
+h+='<div class="sc"><div class="tm"><b>'+T(p+".a")+'</b>'+LG(p+".la",m.a,ca)+C(p+".ac")+'</div><div class="big"><span class="'+(wb?'lo':'')+'">'+T(p+".sa")+'</span> - <span class="'+(wa?'lo':'')+'">'+T(p+".sb")+'</span></div><div class="tm">'+LG(p+".lb",m.b,cb)+'<b>'+T(p+".b")+'</b>'+C(p+".bc")+'</div></div>';
+if(m.vt||ED)h+='<div class="vt"><span>'+T(p+".vt")+'</span></div>';
+h+=mstrip(m,x,ca,cb);if(!m.x.xm.length&&!ED)h+='<div class="empty">Aucune map renseignée.</div>';h+='<div style="text-align:center">'+A(x+".xm","Ajouter une map")+'</div>';
+var tabs=[["ov","Vue d’ensemble"]].concat(m.x.xm.map(function(r,j){return[String(j),"Map "+(j+1)]}));if(!tabs.some(function(t){return t[0]===sub}))sub="ov";
+h+='<div class="tabs" style="margin-left:auto;margin-right:auto">'+tabs.map(function(t){return'<button class="'+(sub===t[0]?'on':'')+'" data-ms="'+t[0]+'">'+t[1]+'</button>'}).join("")+'</div>';
+if(sub==="ov"){var ta=agg(m,"pa"),tb=agg(m,"pb"),auto=ta.length||tb.length;return h+(auto?ptb(p,m,ca,cb,ta,tb,null,null)+'<p class="ed2" style="margin:8px 2px">Total calculé automatiquement à partir des stats de chaque map.</p>':ptb(p,m,ca,cb,m.x.pa||[],m.x.pb||[],x+".pa",x+".pb"))}
+var j=+sub,r=m.x.xm[j];return h+ptb(p,m,ca,cb,r[4].pa,r[4].pb,x+".xm."+j+".4.pa",x+".xm."+j+".4.pb")}
 function allm(){var L=[];DATA.teams.forEach(function(t){(t.results||[]).concat(t.matches||[]).forEach(function(m){L.push(m)})});DATA.cal.forEach(function(e){var z=e[4];if(!z)return;(z.ms||[]).forEach(function(m){L.push(m)});(z.br||[]).forEach(function(r){r.bm.forEach(function(m){L.push(m)})})});
 var s={},o=[];L.forEach(function(m){if(!m.x)return;var k=[m.ev,m.dt,m.tm,m.bo].concat([String(m.a||"")+":"+(m.sa||""),String(m.b||"")+":"+(m.sb||"")].sort()).join("|").toLowerCase();if(s[k])return;s[k]=1;o.push(m)});return o}
 function kd(k,d){return d>0?(k/d).toFixed(2):"—"}
