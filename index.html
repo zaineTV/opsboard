@@ -166,9 +166,20 @@ function NM(t){var now=Date.now(),best=null,bt=1e18;(t.matches||[]).forEach(func
 function tbl(b,k){var g=get(b),c=TB[k],p=b+".t."+k,s="--n:"+c.length,h='<div><div class="xh" style="'+s+'">'+c.map(function(x){return'<span>'+x+'</span>'}).join("")+'<span></span></div>';
 g.t[k].forEach(function(r,j){h+='<div class="xt" style="'+s+'">';r.forEach(function(_,i){h+='<span>'+T(p+"."+j+"."+i)+'</span>'});h+='<span>'+X(p+"."+j)+'</span></div>'});
 if(!g.t[k].length&&!ED)h+='<div class="empty" style="margin-top:8px">Rien à afficher pour l’instant.</div>';return h+'</div>'+A(p,"Ajouter une ligne")}
-function mlist(b,t,mk){var h="";t[mk].forEach(function(m,j){var q=b+"."+mk+"."+j,c=m.st==="Victoire"?" w":m.st==="Défaite"?" l":"";
+function INV(v){var l=String(v||"").trim().toLowerCase();return l==="victoire"?"Défaite":l==="défaite"?"Victoire":v}
+function LGR(p,l,c){var v=get(p),tm=v?null:TM(l),f=v||(tm&&tm.logo)||"";return'<i class="lg'+(f?' hv':'')+'" style="'+(f?'background:url('+esc(U(f))+') center/contain no-repeat':'background:'+c)+'">'+(f?'':esc((l||"?")[0]))+'</i>'}
+function mlist(b,t,mk){var h="",e=function(v){return esc(v==null?"":v)},items=t[mk].map(function(m,j){return{m:m,q:b+"."+mk+"."+j,i:j,v:0,ts:m.ts||0}});
+if(mk==="results"){var nm=function(v){return String(v||"").trim().toLowerCase()},tn=nm(t.n),tsg=nm(t.s),cnt=items.length;
+DATA.teams.forEach(function(u,ui){if(u===t)return;(u.results||[]).forEach(function(m,j){var bn=nm(m.b);if(!bn||(bn!==tn&&bn!==tsg))return;
+var dup=t.results.some(function(o){return o.ev===m.ev&&o.dt===m.dt&&nm(o.b)===nm(m.a)&&o.sa===m.sb&&o.sb===m.sa});if(dup)return;
+items.push({m:m,q:"teams."+ui+".results."+j,i:cnt++,v:1,from:u.n,ts:m.ts||0})})});
+items.sort(function(x,y){if(x.ts||y.ts){if(x.ts!==y.ts)return y.ts-x.ts}return x.i-y.i})}
+items.forEach(function(it){var m=it.m,q=it.q;
+if(it.v){var vs=INV(m.st),c=vs==="Victoire"?" w":vs==="Défaite"?" l":"";
+h+='<div class="m"><div><b>'+e(m.bo)+'</b><small>'+e(m.ev)+'</small></div><div class="vs"><span>'+e(m.b)+' '+LGR(q+".lb",m.b,m.bc)+'</span>'+e(m.sb)+' - '+e(m.sa)+'<span>'+LGR(q+".la",m.a,m.ac)+' '+e(m.a)+'</span></div><div class="d'+c+'"><b>'+e(vs)+'</b><br>'+e(m.dt)+'<br>'+e(m.tm)+'<br><button class="pb" data-m="'+q+'">Détails →</button>'+(ED?'<br><small class="ed2">Ajouté depuis la page de '+e(it.from)+'</small>':'')+'</div></div>';return}
+var c=m.st==="Victoire"?" w":m.st==="Défaite"?" l":"";
 h+='<div class="m"><div><b>'+T(q+".bo")+'</b><small>'+T(q+".ev")+'</small></div><div class="vs"><span>'+T(q+".a")+' '+LG(q+".la",m.a,m.ac)+C(q+".ac")+'</span>'+T(q+".sa")+' - '+T(q+".sb")+'<span>'+LG(q+".lb",m.b,m.bc)+' '+T(q+".b")+C(q+".bc")+'</span></div><div class="d'+c+'"><b>'+T(q+".st")+'</b><br>'+T(q+".dt")+'<br>'+T(q+".tm")+'<br><button class="pb" data-m="'+q+'">Détails →</button>'+X(q)+'</div></div>'});
-if(!t[mk].length&&!ED)h+='<div class="empty" style="margin-top:8px">Aucun match pour l’instant.</div>';return h+A(b+"."+mk,"Ajouter un match")}
+if(!items.length&&!ED)h+='<div class="empty" style="margin-top:8px">Aucun match pour l’instant.</div>';return h+A(b+"."+mk,"Ajouter un match")}
 function team(i){var t=DATA.teams[i],b="teams."+i,sub=st.sub||"Résultats",h='<div class="gp"><div><div class="title">'+LG(b+".logo",t.n,t.c)+'<h1>Équipe — <span style="color:'+t.c+'">'+T(b+".n")+'</span></h1>';
 if(ED)h+=C(b+".c")+'<button class="add" style="margin:0" data-img="'+b+'.logo">'+(t.logo?'Changer le logo':'+ Ajouter le logo')+'</button>'+(t.logo?'<button class="add" style="margin:0" data-rm="'+b+'.logo">Retirer le logo</button>':'')+'<span class="ed2">Sigle : '+T(b+".s")+' · Ville : '+T(b+".city")+'</span>'+X(b,"Supprimer l’équipe");else h+='<button class="btn">Ajouter aux favoris</button>';
 h+='</div><div class="players">';
@@ -308,7 +319,7 @@ document.addEventListener("keydown",function(e){if(e.key==="Enter"&&e.target.dat
 document.addEventListener("change",function(e){var t=e.target;if(t.dataset&&t.dataset.c){setp(t.dataset.c,t.value);draw()}});
 document.addEventListener("click",function(e){var t=e.target.closest("[data-del],[data-add],[data-img],[data-rm]");if(!t||!ED)return;
 if(t.dataset.del){var a=t.dataset.del.split("."),i=+a.pop();get(a.join(".")).splice(i,1);if(a.join(".")==="teams")st.g=null;draw()}
-else if(t.dataset.img){imgPath=t.dataset.img;$("file").click()}else if(t.dataset.rm){setp(t.dataset.rm,"");draw()}else{var p=t.dataset.add,k=p.split(".").pop(),n=NEW[k]();get(p).push(n);if(k==="teams")st.g=n.id;draw()}});
+else if(t.dataset.img){imgPath=t.dataset.img;$("file").click()}else if(t.dataset.rm){setp(t.dataset.rm,"");draw()}else{var p=t.dataset.add,k=p.split(".").pop(),n=NEW[k]();if(k==="results"&&p.split(".")[0]==="teams"){var tt=DATA.teams[+p.split(".")[1]];if(tt){n.a=tt.n;n.ac=tt.c}n.ts=Date.now();get(p).unshift(n)}else get(p).push(n);if(k==="teams")st.g=n.id;draw()}});
 function nxt(i){var t=DATA.teams[i],b="teams."+i,am=NM(t),h;
 if(am){var nb=b+".matches."+t.matches.indexOf(am);h='<div class="nm"><div class="tm">'+LG(nb+".la",am.a,am.ac)+T(nb+".a")+'</div><div>-<br><small style="color:var(--mu)">'+T(nb+".ev")+'<br>'+T(nb+".dt")+' · '+T(nb+".tm")+'</small></div><div class="tm">'+LG(nb+".lb",am.b,am.bc)+T(nb+".b")+'</div></div>'}
 else{var n=b+".next";h='<div class="nm"><div class="tm">'+TI(t)+''+esc(t.n)+'</div><div>vs</div><div class="tm"><i style="background:var(--bg3);color:var(--tx)">?</i>'+T(n+".b")+'</div></div><p class="ed2" style="text-align:center;margin:10px 0 0">'+T(n+".ev")+'<br>'+T(n+".dt")+' '+T(n+".tm")+'</p>'}
