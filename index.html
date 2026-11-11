@@ -121,6 +121,7 @@ t.logo=t.logo||"";
 t.pl=t.pl.map(function(p){p=typeof p==="string"?{p:p}:p;["img","r","n","d","in","out"].forEach(function(k){if(p[k]==null)p[k]=""});return p});
 t.next=t.next||{b:"À déterminer",ev:"Kickoff Classic",dt:"4–13 déc. 2026",tm:""};t.stats=t.stats||[];t.maps=t.maps||[];t.matches=t.matches||[];
 if(!t.s3){if(!t.stats.length)t.stats=[["Win rate","—"],["Joués","—"],["Gagnés","—"]];t.s3=1}
+if(!t.s4){if(!t.stats.some(function(x){return/^(perdus?|défaites)$/i.test(String(x[0]).trim())})){var gi=-1;t.stats.forEach(function(x,j){if(/^gagn/i.test(String(x[0]).trim()))gi=j});t.stats.splice(gi>-1?gi+1:t.stats.length,0,["Perdus","—"])}t.s4=1}
 if(!t.results){t.results=[];FIN.forEach(function(f){var w=f[3]===t.id;if(!w&&t.id!=="opt")return;var x=gt(w?"opt":f[3]);t.results.push({bo:f[1],ev:f[0],a:t.n,b:x.n,ac:t.c,bc:x.c,la:"",lb:"",sa:String(w?f[4]:f[5]),sb:String(w?f[5]:f[4]),st:w?"Victoire":"Défaite",dt:f[2],tm:"",f:1})})}
 if(!t.t){t.t={tournois:[],classement:[],palmares:t.tt.map(function(x){return[x,"2026",""]}),gains:[],mercato:[]};
 if(PRIZE[t.id]){t.t.tournois.push(["Championnat 2026","16–19 juil. 2026",t.ch,""]);t.t.gains.push(["Championnat 2026","19/07/2026",PRIZE[t.id]])}
@@ -138,7 +139,7 @@ function T(p){var v=get(p);return ED?'<span class="ed" contenteditable="true" da
 function X(p,l){return ED?'<button class="x" data-del="'+p+'">'+(l||"×")+'</button>':""}
 function A(p,l){return ED?'<button class="add" data-add="'+p+'">+ '+l+'</button>':""}
 function C(p){return ED?'<input type="color" data-c="'+p+'" value="'+get(p)+'" aria-label="Couleur">':""}
-var NEW={teams:function(){return{id:"t"+Date.now(),n:"Nouvelle équipe",s:"NEW",c:"#8b8b95",city:"Ville",logo:"",rk:"",pts:"",ch:"—",tt:[],pl:[]}},pl:function(){return{p:"Nouveau joueur",img:""}},ch:function(){return["Chaîne","https://"]},tt:function(){return"Nouveau titre"},cal:function(){return["Date","Événement","Détails",""]},pal:function(){return["Événement","Vainqueur","Score"]},news:function(){return["Catégorie","Titre","Texte"]}};
+var NEW={teams:function(){return{id:"t"+Date.now(),n:"Nouvelle équipe",s:"NEW",c:"#8b8b95",city:"Ville",logo:"",stats:[["Win rate","—"],["Joués","—"],["Gagnés","—"],["Perdus","—"]],s3:1,s4:1,rk:"",pts:"",ch:"—",tt:[],pl:[]}},pl:function(){return{p:"Nouveau joueur",img:""}},ch:function(){return["Chaîne","https://"]},tt:function(){return"Nouveau titre"},cal:function(){return["Date","Événement","Détails",""]},pal:function(){return["Événement","Vainqueur","Score"]},news:function(){return["Catégorie","Titre","Texte"]}};
 function TLB(t){return t.logo?'background:'+t.c+' url('+esc(U(t.logo))+') center/72% no-repeat':'background:'+t.c}
 function TM(n){n=String(n||"").trim().toLowerCase();if(!n)return null;for(var k=0;k<DATA.teams.length;k++){var t=DATA.teams[k];if(String(t.n).toLowerCase()===n||String(t.s).toLowerCase()===n)return t}return null}
 function TI(t){return'<i style="'+(t.logo?'background:url('+esc(U(t.logo))+') center/contain no-repeat':'background:'+t.c)+'">'+(t.logo?'':esc(t.s))+'</i>'}
