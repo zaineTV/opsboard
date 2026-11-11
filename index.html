@@ -144,7 +144,9 @@ function TLB(t){return t.logo?'background:'+t.c+' url('+esc(U(t.logo))+') center
 function TM(n){n=String(n||"").trim().toLowerCase();if(!n)return null;for(var k=0;k<DATA.teams.length;k++){var t=DATA.teams[k];if(String(t.n).toLowerCase()===n||String(t.s).toLowerCase()===n)return t}return null}
 function TI(t){return'<i style="'+(t.logo?'background:url('+esc(U(t.logo))+') center/contain no-repeat':'background:'+t.c)+'">'+(t.logo?'':esc(t.s))+'</i>'}
 function tile(t,cl){return'<button class="'+cl+'" data-g="'+t.id+'" style="'+TLB(t)+'" title="'+esc(t.n)+'" aria-label="'+esc(t.n)+'">'+(t.logo?'':esc(t.s))+'</button>'}
-function evs(n,ro){return DATA.cal.slice(0,n||99).map(function(e,i){var q="cal."+i,U=ro?function(p){return esc(get(p))}:T;
+function evrank(e){var v=String(e&&e[3]||"").trim().toLowerCase();return/^en cours/.test(v)?0:/^termin/.test(v)?2:1}
+function evReorder(){var c=document.getElementById("evl");if(!c)return;var ix=function(r){var b=r.querySelector("[data-ev]");return b?+b.dataset.ev:0},rows=[].slice.call(c.children);rows.sort(function(a,b){return evrank(DATA.cal[ix(a)])-evrank(DATA.cal[ix(b)])||ix(a)-ix(b)});rows.forEach(function(r){r.classList.toggle("now",!!DATA.cal[ix(r)][3]);c.appendChild(r)})}
+function evs(n,ro){return DATA.cal.map(function(e,i){return{e:e,i:i}}).sort(function(a,b){return evrank(a.e)-evrank(b.e)||a.i-b.i}).slice(0,n||99).map(function(o){var e=o.e,i=o.i,q="cal."+i,U=ro?function(p){return esc(get(p))}:T;
 return'<div class="ev'+(e[3]?' now':'')+'"><div class="dt">'+U(q+".0")+'</div><div><b>'+U(q+".1")+'</b><small>'+U(q+".2")+'</small></div>'+'<span class="row" style="margin:0">'+(ED&&!ro?T(q+".3")+X(q):(e[3]?'<em>'+esc(e[3])+'</em>':''))+'<button class="pb" data-ev="'+i+'">Ouvrir →</button></span></div>'}).join("")}
 function grid(){return'<div class="teams">'+DATA.teams.map(function(t){return'<button class="rc" data-g="'+t.id+'" style="background:'+t.c+'">'+(t.logo?'<span class="tl" style="background:url('+esc(U(t.logo))+') center/contain no-repeat"></span>':'<b>'+esc(t.s)+'</b>')+esc(t.n)+'<small>'+esc(t.city)+'</small></button>'}).join("")+'</div>'+A("teams","Ajouter une équipe")}
 function home(){
@@ -273,7 +275,7 @@ var i=st.g?gi(st.g):-1;if(st.g&&i<0)st.g=null;
 document.documentElement.style.setProperty("--ac",i>-1?DATA.teams[i].c:"#8fd14f");
 $("side").innerHTML='<button class="g home" data-home="1" aria-label="Accueil">⌂</button><span class="sep"></span>'+DATA.teams.map(function(x){return tile(x,"g"+(x.id===st.g?" on":""))}).join("")+(ED?'<button class="g home" data-add="teams" aria-label="Ajouter une équipe">+</button>':"");
 $("nav").innerHTML=TABS.map(function(x){return'<button class="'+(i<0&&st.tab===x?'on':'')+'" data-t="'+x+'">'+x+'</button>'}).join("");
-$("view").innerHTML=st.mp&&okp(st.mp)?mpage(st.mp):i>-1?team(i):st.ev!=null&&DATA.cal[st.ev]?evpage(st.ev):st.tab==="Équipes"?'<div class="title"><h1>Équipes</h1></div>'+grid():st.tab==="Calendrier"?'<div class="title"><h1>Calendrier '+DATA.season+'</h1></div>'+evs()+A("cal","Ajouter un événement"):st.tab==="Classement"?rank():st.tab==="Stats"?stpage():st.tab==="Palmarès"?pal():home();
+$("view").innerHTML=st.mp&&okp(st.mp)?mpage(st.mp):i>-1?team(i):st.ev!=null&&DATA.cal[st.ev]?evpage(st.ev):st.tab==="Équipes"?'<div class="title"><h1>Équipes</h1></div>'+grid():st.tab==="Calendrier"?'<div class="title"><h1>Calendrier '+DATA.season+'</h1></div>'+'<div id="evl">'+evs()+'</div>'+A("cal","Ajouter un événement"):st.tab==="Classement"?rank():st.tab==="Stats"?stpage():st.tab==="Palmarès"?pal():home();
 document.querySelectorAll("[data-g]").forEach(function(b){b.onclick=function(){st.mp=null;st.g=b.dataset.g;draw();window.scrollTo(0,0)}});
 document.querySelectorAll("[data-t]").forEach(function(b){b.onclick=function(){st.mp=null;st.tab=b.dataset.t;st.g=null;st.ev=null;draw();window.scrollTo(0,0)}});
 document.querySelectorAll("[data-home]").forEach(function(b){b.onclick=function(){st.mp=null;st.g=null;st.ev=null;st.tab="Vue d’ensemble";draw()}});
@@ -350,6 +352,7 @@ $("file").onchange=async function(){var f=this.files[0];this.value="";if(!f||!im
 try{var o=await shrink(f),name="images/"+Date.now()+"."+o.ext;await gh("PUT","/contents/"+name,{message:"Ajout d’une image",content:o.b64});PREV[name]=o.url;setp(imgPath,name);draw();msg("Image ajoutée — pense à Enregistrer.")}
 catch(e){msg("Échec de l’import : "+e.message)}};
 document.addEventListener("focusout",function(e){var t=e.target;if(ED&&t.dataset&&/\.pts$/.test(t.dataset.e||""))draw()});
+document.addEventListener("focusout",function(e){var t=e.target;if(t.dataset&&/^cal\.\d+\.3$/.test(t.dataset.e||""))evReorder()});
 $("q").addEventListener("keydown",function(e){if(e.key!=="Enter")return;var v=this.value.toLowerCase(),f=DATA.teams.filter(function(x){return x.n.toLowerCase().indexOf(v)>-1||x.s.toLowerCase()===v})[0];if(f&&v){st.mp=null;st.g=f.id;draw()}});
 draw();
 </script></body></html>
