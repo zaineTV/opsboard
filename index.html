@@ -109,6 +109,7 @@ h2.oldh{font-size:18px;color:var(--mu);margin:30px 0 14px}
 .bxn i{width:18px;height:18px;border-radius:5px;display:inline-grid;place-items:center;font-size:7px;font-weight:800;font-style:normal;color:#0b0b0d;flex:none;background:var(--line)}
 .brt{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 4px}.brr{display:flex;align-items:center;gap:6px;background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:6px 10px}.brn{font-weight:700}
 .ptt .lg.sm,.mpill .lg.sm{width:30px;height:30px;font-size:13px;border-radius:8px}.ptt .lg.sm.hv,.mpill .lg.sm.hv{border-radius:0}.mpill{gap:10px}
+.tr{grid-template-columns:44px 1fr 110px}
 </style></head><body>
 <div class="app"><aside id="side"></aside><main>
 <header class="top"><span class="brand">OPSBOARD</span><nav id="nav"></nav><label class="search"><span aria-hidden="true">⌕</span><input id="q" placeholder="Chercher une équipe…" aria-label="Chercher une équipe"></label><span id="bar" class="row" style="margin:0"></span></header>
@@ -222,7 +223,7 @@ var card=function(p,j){var q=b+".pl."+j,a=age(p.d);return'<div class="pl'+(gone(
 var old=[];t.pl.forEach(function(p,j){if(gone(p))old.push(j);else h+=card(p,j)});h+='</div>';
 if(old.length){h+='<h2 class="oldh">Anciens membres ('+old.length+')</h2><div class="players">';old.forEach(function(j){h+=card(t.pl[j],j)});h+='</div>'}
 h+=A(b+".pl","Ajouter un joueur");
-h+='<div class="stats"><div><small>Classement 2026</small><b>'+(t.rk?t.rk+"e":"—")+'</b></div><div><small>Points CDL 2026</small><b>'+(ED?T(b+".pts"):(t.pts||"—"))+'</b></div><div><small>Championnat 2026</small><b>'+T(b+".ch")+'</b></div><div><small>Joueurs 2027</small><b>'+t.pl.filter(function(p){return!gone(p)}).length+'</b></div>';
+h+='<div class="stats"><div><small>Classement '+cyr()+'</small><b>'+rkTxt(t)+'</b></div><div><small>Points CDL '+cyr()+'</small><b>'+(ED?T(b+".py."+cyr()):ptTxt(t))+'</b></div><div><small>Championnat 2026</small><b>'+T(b+".ch")+'</b></div><div><small>Joueurs 2027</small><b>'+t.pl.filter(function(p){return!gone(p)}).length+'</b></div>';
 t.stats.forEach(function(s,j){h+='<div><small>'+T(b+".stats."+j+".0")+'</small><b>'+(AS(t,s[0])||T(b+".stats."+j+".1"))+'</b>'+X(b+".stats."+j)+'</div>'});
 h+=A(b+".stats","Statistique")+'</div><div class="tabs">';
 ["Résultats","Calendrier","Tournois","Classement","Palmarès","Gains","Mercato"].forEach(function(x){h+='<button class="'+(sub===x?'on':'')+'" data-s="'+x+'">'+x+'</button>'});
@@ -233,7 +234,12 @@ h+='</div><div class="side"><div class="box"><h3>Palmarès 2026</h3>'+(t.tt.leng
 h+='<div class="box"><h3>Prochain match</h3>'+nxt(i)+'</div><div class="box"><h3>Prochain événement</h3>'+evs(1,true)+'</div><div class="box"><h3>Maps</h3>'+mp+A(b+".maps","Ajouter une map")+'</div></div></div>';
 return h}
 function pn(v){var n=parseFloat(String(v==null?"":v).replace(/\s/g,"").replace(",","."));return isNaN(n)?null:n}
-function ranked(){DATA.teams.forEach(function(t){if(pn(t.pts)===null)t.rk=""});var a=DATA.teams.filter(function(t){return pn(t.pts)!==null}).sort(function(x,y){return pn(y.pts)-pn(x.pts)});a.forEach(function(t,i){t.rk=i>0&&pn(a[i-1].pts)===pn(t.pts)?a[i-1].rk:i+1});return a}
+function ranked(){DATA.yrs=DATA.yrs||["2026","2027"];DATA.teams.forEach(function(t){if(!t.py){t.py={};if(t.pts!=null&&t.pts!=="")t.py["2026"]=t.pts}})}
+function dyr(){var y=DATA.yrs.slice().sort().reverse();for(var i=0;i<y.length;i++)if(DATA.teams.some(function(t){return pn((t.py||{})[y[i]])!==null}))return y[i];return y[0]||DATA.season}
+function cyr(){return st.yr&&DATA.yrs.indexOf(st.yr)>-1?st.yr:dyr()}
+function ranks(y){ranked();var a=DATA.teams.filter(function(t){return pn(t.py[y])!==null}).sort(function(x,z){return pn(z.py[y])-pn(x.py[y])}),m={};a.forEach(function(t,i){m[t.id]=i>0&&pn(a[i-1].py[y])===pn(t.py[y])?m[a[i-1].id]:i+1});return m}
+function rkTxt(t){var r=ranks(cyr())[t.id];return r?r+"e":"—"}
+function ptTxt(t){var v=t.py[cyr()];return v==null||v===""?"—":esc(v)}
 NEW.ms=function(){return NEW.matches()};NEW.br=function(){return{n:"Nouveau tour",bm:[],sec:"W"}};NEW.bm=function(){return{a:"Équipe A",b:"Équipe B",sa:"",sb:""}};
 var BW=200,BH=52,BGP=64,BLB=16,BPD=16,SEC=["W","L","F"],SECN={W:"Winners",L:"Élimination",F:"Finale"};
 function bxrow(p,m,k,w,l){var t=TM(m[k]),c=t?t.c:"#8b8b95",s=k==="a"?"sa":"sb";
@@ -312,8 +318,10 @@ if(sub==="Cumulé")return h+stbl(S.P);
 var ms=Object.keys(S.M).map(function(k){return S.M[k]}).filter(function(m){return Object.keys(m.pl).length}).sort(function(a,b){return b.c-a.c});
 if(!ms.length)return h+'<div class="empty">Aucune stat par map pour l’instant. Ajoute-les sous chaque map dans la page d’un match.</div>';
 return h+ms.map(function(m){var u=sums(m.pl);return'<div class="box"><h3>'+esc(m.n)+' <small style="color:var(--mu);font-weight:400">'+esc(m.md||"")+' · '+m.c+' '+(m.c>1?"parties":"partie")+' · '+u.k+' kills · '+u.d+' morts · K/D '+kd(u.k,u.d)+' · '+u.g+' dégâts</small></h3>'+stbl(m.pl)+'</div>'}).join("")}
-function rank(){var rows=ranked();
-return'<div class="title"><h1>Classement 2026</h1></div><div class="tr h"><span>#</span><span>Équipe</span><span>Points</span><span class="c4">Championnat</span></div>'+rows.map(function(t){return'<div class="tr"><b>'+esc(t.rk)+'</b><button data-g="'+t.id+'">'+TI(t)+''+esc(t.n)+'</button><span>'+T("teams."+gi(t.id)+".pts")+'</span><span class="c4">'+esc(t.ch)+'</span></div>'}).join("")+'<p class="note">Classement 2026, trié automatiquement par points : l’équipe qui a le plus de points passe devant.</p>'}
+function rank(){ranked();var y=cyr(),R=ranks(y),rows=DATA.teams.slice().sort(function(a,b){var x=pn(a.py[y]),z=pn(b.py[y]);if(x===null&&z===null)return 0;if(x===null)return 1;if(z===null)return-1;return z-x});
+var h='<div class="title"><h1>Classement '+esc(y)+'</h1></div><div class="tabs">'+DATA.yrs.slice().sort().reverse().map(function(a){return'<button class="'+(a===y?'on':'')+'" data-yr="'+esc(a)+'">'+esc(a)+'</button>'}).join("")+(ED?'<button class="add" data-addyr="1" style="margin:0 0 0 6px">+ Année</button>'+(DATA.yrs.length>1?'<button class="x" data-delyr="'+esc(y)+'" style="margin:0 0 0 6px">Supprimer '+esc(y)+'</button>':''):'')+'</div>';
+h+='<div class="tr h"><span>#</span><span>Équipe</span><span>Points</span></div>'+rows.map(function(t){var i=gi(t.id),v=t.py[y];return'<div class="tr"><b>'+(R[t.id]||"—")+'</b><button data-g="'+t.id+'">'+TI(t)+esc(t.n)+'</button><span>'+(ED?T("teams."+i+".py."+y):(v==null||v===""?"—":esc(v)))+'</span></div>'}).join("");
+return h+'<p class="note">Classement trié automatiquement par points : l’équipe qui a le plus de points passe devant. Les '+DATA.teams.length+' équipes sont listées.</p>'}
 function pal(){return'<div class="title"><h1>Palmarès 2026</h1></div>'+DATA.pal.map(function(p,i){var q="pal."+i;return'<div class="ev"><div class="dt">'+T(q+".0")+'</div><div><b>'+T(q+".1")+'</b><small>'+T(q+".2")+'</small></div>'+X(q)+'</div>'}).join("")+A("pal","Ajouter un résultat")}
 function draw(){
 ranked();
@@ -333,6 +341,9 @@ document.querySelectorAll("[data-m]").forEach(function(b){b.onclick=function(){s
 document.querySelectorAll("[data-mback]").forEach(function(b){b.onclick=function(){Object.assign(st,st.back||{});st.mp=null;draw()}});
 document.querySelectorAll("[data-ss]").forEach(function(b){b.onclick=function(){st.ss=b.dataset.ss;draw()}});
 document.querySelectorAll("[data-ms]").forEach(function(b){b.onclick=function(){st.ms=b.dataset.ms;draw()}});
+document.querySelectorAll("[data-yr]").forEach(function(b){b.onclick=function(){st.yr=b.dataset.yr;draw()}});
+document.querySelectorAll("[data-addyr]").forEach(function(b){b.onclick=function(){var m=Math.max.apply(null,DATA.yrs.map(Number));var n=String(isFinite(m)?m+1:new Date().getFullYear());DATA.yrs.push(n);st.yr=n;draw()}});
+document.querySelectorAll("[data-delyr]").forEach(function(b){b.onclick=function(){var y=b.dataset.delyr;if(!confirm("Supprimer l’année "+y+" et les points de toutes les équipes pour cette année ?"))return;DATA.yrs.splice(DATA.yrs.indexOf(y),1);DATA.teams.forEach(function(t){delete t.py[y]});st.yr=null;draw()}});
 bar()}
 function msg(t){var m=$("ms");if(m)m.textContent=t}
 function bar(){var b=$("bar");
@@ -379,7 +390,7 @@ document.addEventListener("keydown",function(e){if(e.key==="Enter"&&e.target.dat
 document.addEventListener("change",function(e){var t=e.target;if(t.dataset&&t.dataset.c){setp(t.dataset.c,t.value);draw()}});
 document.addEventListener("click",function(e){var t=e.target.closest("[data-del],[data-add],[data-img],[data-rm]");if(!t||!ED)return;
 if(t.dataset.del){var a=t.dataset.del.split("."),i=+a.pop();get(a.join(".")).splice(i,1);if(a.join(".")==="teams")st.g=null;draw()}
-else if(t.dataset.img){imgPath=t.dataset.img;$("file").click()}else if(t.dataset.rm){setp(t.dataset.rm,"");draw()}else{var p=t.dataset.add,k=p.split(".").pop(),n=NEW[k]();if(k==="results"&&p.split(".")[0]==="teams"){var tt=DATA.teams[+p.split(".")[1]];if(tt){n.a=tt.n;n.ac=tt.c}n.ts=Date.now();get(p).unshift(n)}else get(p).push(n);if(k==="teams")st.g=n.id;draw()}});
+else if(t.dataset.img){imgPath=t.dataset.img;$("file").click()}else if(t.dataset.rm){setp(t.dataset.rm,"");draw()}else{var p=t.dataset.add,k=p.split(".").pop(),n=NEW[k]();if(k==="results"&&p.split(".")[0]==="teams"){var tt=DATA.teams[+p.split(".")[1]];if(tt){n.a=tt.n;n.ac=tt.c}n.ts=Date.now();get(p).unshift(n)}else if(/^teams\.\d+\.t\.(palmares|gains)$/.test(p))get(p).unshift(n);else get(p).push(n);if(k==="teams")st.g=n.id;draw()}});
 function nxt(i){var t=DATA.teams[i],b="teams."+i,am=NM(t),h;
 if(am){var nb=b+".matches."+t.matches.indexOf(am);h='<div class="nm"><div class="tm">'+LG(nb+".la",am.a,am.ac)+T(nb+".a")+'</div><div>-<br><small style="color:var(--mu)">'+T(nb+".ev")+'<br>'+T(nb+".dt")+' · '+T(nb+".tm")+'</small></div><div class="tm">'+LG(nb+".lb",am.b,am.bc)+T(nb+".b")+'</div></div>'}
 else{var n=b+".next";h='<div class="nm"><div class="tm">'+TI(t)+''+esc(t.n)+'</div><div>vs</div><div class="tm"><i style="background:var(--bg3);color:var(--tx)">?</i>'+T(n+".b")+'</div></div><p class="ed2" style="text-align:center;margin:10px 0 0">'+T(n+".ev")+'<br>'+T(n+".dt")+' '+T(n+".tm")+'</p>'}
@@ -398,7 +409,7 @@ var d=c.toDataURL(png?"image/png":"image/jpeg",.85);URL.revokeObjectURL(u);ok({e
 $("file").onchange=async function(){var f=this.files[0];this.value="";if(!f||!imgPath)return;msg("Import de l’image…");
 try{var o=await shrink(f),name="images/"+Date.now()+"."+o.ext;await gh("PUT","/contents/"+name,{message:"Ajout d’une image",content:o.b64});PREV[name]=o.url;setp(imgPath,name);draw();msg("Image ajoutée — pense à Enregistrer.")}
 catch(e){msg("Échec de l’import : "+e.message)}};
-document.addEventListener("focusout",function(e){var t=e.target;if(ED&&t.dataset&&/\.pts$/.test(t.dataset.e||""))draw()});
+document.addEventListener("focusout",function(e){var t=e.target;if(ED&&t.dataset&&/\.(pts|py\.\d+)$/.test(t.dataset.e||""))draw()});
 document.addEventListener("focusout",function(e){var t=e.target;if(t.dataset&&/^cal\.\d+\.3$/.test(t.dataset.e||""))evReorder()});
 document.addEventListener("focusout",function(e){var t=e.target,mt=ED&&t.dataset&&/^teams\.(\d+)\.matches\.(\d+)\.(sa|sb)$/.exec(t.dataset.e||"");if(!mt)return;var T0=DATA.teams[+mt[1]],m=T0&&T0.matches[+mt[2]];if(!m)return;var x=pn(m.sa),y=pn(m.sb);if(x===null||y===null||x===y)return;var nm=function(v){return String(v||"").trim().toLowerCase()},isB=nm(m.b)===nm(T0.n)||nm(m.b)===nm(T0.s),mine=isB?y:x,opp=isB?x:y;m.st=mine>opp?"Victoire":"Défaite";m.ts=Date.now();T0.matches.splice(+mt[2],1);T0.results.unshift(m);draw()});
 $("q").addEventListener("keydown",function(e){if(e.key!=="Enter")return;var v=this.value.toLowerCase(),f=DATA.teams.filter(function(x){return x.n.toLowerCase().indexOf(v)>-1||x.s.toLowerCase()===v})[0];if(f&&v){st.mp=null;st.g=f.id;draw()}});
